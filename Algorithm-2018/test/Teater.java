@@ -1,5 +1,5 @@
 public class Teater {
-	public void Main() {
+	public static void main(String[] args) {
 		Solutions sol = new Solutions();
 		int[] input611 ={1,2,2,3,1,4,2};
 		int sol611 = sol.sol611(input611);
@@ -8,7 +8,7 @@ public class Teater {
 		
 	}
 	
-	public void DisplaySol(String quizindex,String sol) {
+	public static void DisplaySol(String quizindex,String sol) {
 		String output = quizindex + " result:" + sol;
 		System.out.println(output);
 	}
