@@ -6,6 +6,10 @@ public class Teater {
 		String str611 = Integer.toString(sol611);
 		DisplaySol("611",str611);
 		
+		String input592 = "-1/2+1/2";
+		String str592 = sol.sol592(input592);
+		DisplaySol("592",str592);
+		
 	}
 	
 	public static void DisplaySol(String quizindex,String sol) {

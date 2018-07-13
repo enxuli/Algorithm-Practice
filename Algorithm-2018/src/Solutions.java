@@ -15,7 +15,6 @@ public class Solutions {
     		for(int j = i + 1; j < nums.length - 1 && nums[i] != 0; j++)
     			for(int k = j + 1; k<nums.length && nums[i] + nums[j] > nums[k];k++){
     				ans++;//this can be change to while to reduce running time
-    				System.out.println(nums[i] +"+" +nums[j] +">"+ nums[k]);
     			}
     	return ans;
     }
