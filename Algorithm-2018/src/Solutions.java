@@ -2,9 +2,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.lang.Math;
 import java.util.Random;
+import java.util.Set;
 import java.util.Stack;
 import java.util.Collections;
 
@@ -154,6 +156,7 @@ public class Solutions {
     	default: return false;
     	}
     }
+    
     public boolean sol20p(String input20) {
     	Stack<Character> stack = new Stack<Character>();
     	for(char c : input20.toCharArray()) {
@@ -164,6 +167,49 @@ public class Solutions {
     	}
     	return stack.isEmpty();
     }
+    // first time to use hashset!!!  there is no dup element in set !!
+    // This is kind of DP !!
+    public List<String> sol22(int n) {
+        if (n <= 0) return null;
+        Set<String> res = new HashSet<>();
+        res.add("()");
+        
+        if (n == 1) return new ArrayList<>(res);
+        
+        for (int i = 2; i <= n ; i++) {
+        	Set<String> tmp = new HashSet<>();
+	        for (String s : res) {
+	        	tmp.add("()"+s);
+	        	for (int j = 1; j < i; j ++) tmp.add(s.substring(0,j)+"()"+s.substring(j));
+	        	tmp.add(s+"()");
+	        }
+	        res=tmp;
+        }
+        return new ArrayList<>(res);
+    }
+    
+    //Backtracking method: keep tracking open and close bracket 
+    // actually it's a DFS method !!
+    
+    public List<String> sol22p(int n) {
+    	List<String> ans = new ArrayList();
+        backtrack(ans, "", 0, 0, n);
+        return ans;
+    }
+    
+    private void backtrack(List<String> ans, String s, int open, int close, int n) {
+    	if (s.length() == 2 * n) {
+    		ans.add(s);
+    		return;
+    	}
+    	if (open < n) backtrack(ans, s+"(", open+1, close, n);
+    	if (close < open) backtrack(ans, s+")", open, close+1, n);
+    }
+    
+    
+    
+    
+    
     
     
 }

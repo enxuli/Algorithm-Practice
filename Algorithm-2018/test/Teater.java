@@ -19,6 +19,10 @@ public class Teater {
 		String input20 = "{[[()][{()}]}";
 		String output20 = Boolean.toString(sol.sol20p(input20));
 		DisplaySol("20",output20);
+		
+		//List<String> sol22p = sol.sol22p(3);
+		
+		
 	}
 	
 	public static void DisplaySol(String quizindex,String sol) {
