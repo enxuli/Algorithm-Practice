@@ -205,6 +205,57 @@ public class Solutions {
     	if (open < n) backtrack(ans, s+"(", open+1, close, n);
     	if (close < open) backtrack(ans, s+")", open, close+1, n);
     }
+    // do not violate single responsibility!!
+    public void sol31(int[] nums) {
+    	for(int i = nums.length-2; i >= 0 ; i-- ) {
+    		for (int j = nums.length-1; j > i; j--) {
+    			if (nums[j]>nums[i]) {
+    				int tmp = nums[i];
+    				nums[i] = nums[j];
+    				nums[j] = tmp;
+                    int x = i+1, y = nums.length-1;
+			    	while(x<y) {
+						int tmp2 = nums[x];
+						nums[x] = nums[y];
+						nums[y] = tmp2;
+						x++;
+						y--;
+			        }
+    				return;
+    			}
+    		}
+    	}
+    	int x = 0, y = nums.length-1;
+    	while(x<y) {
+			int tmp = nums[x];
+			nums[x] = nums[y];
+			nums[y] = tmp;
+			x++;
+			y--;
+    	}
+    }
+    //A least a half of nums array is sorted so that we can continue to find 
+    //which half is sorted, finally we can find 
+    public int sol33(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length -1;
+        return biSearch(nums, target, low, high);
+    }
+    
+    private int biSearch(int[] nums, int target, int low, int high) {
+    	if(low > high) return -1;
+    	int mid = (low + high)/2;
+    	if(nums[mid]==target) return mid;
+    	
+    	if(nums[low]<= nums[mid]) {
+    		if(nums[low]<target && nums[mid]>target) return biSearch(nums,target, low, mid -1);
+    		else return biSearch(nums,target, mid+1, high);
+    	}else {
+    		if(nums[mid]<target && nums[high]>target) return biSearch(nums,target, mid+1, high);
+    		else return biSearch(nums,target, low, mid -1);
+    	}
+    	
+    }
     
     
     

@@ -22,6 +22,10 @@ public class Teater {
 		
 		//List<String> sol22p = sol.sol22p(3);
 		
+		int[] input33 = {6,7,8,9,0,1,2,3,4,5};
+		int sol33 = sol.sol33(input33,0);
+		String str33 = Integer.toString(sol33);
+		DisplaySol("33",str33);
 		
 	}
 	
