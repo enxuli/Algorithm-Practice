@@ -235,7 +235,8 @@ public class Solutions {
     	}
     }
     //A least a half of nums array is sorted so that we can continue to find 
-    //which half is sorted, finally we can find 
+    //which half is sorted, finally we can find target!!
+    //refined binary search
     public int sol33(int[] nums, int target) {
         int low = 0;
         int high = nums.length -1;
@@ -248,18 +249,51 @@ public class Solutions {
     	if(nums[mid]==target) return mid;
     	
     	if(nums[low]<= nums[mid]) {
-    		if(nums[low]<target && nums[mid]>target) return biSearch(nums,target, low, mid -1);
+    		if(nums[low]<=target && nums[mid]>=target) return biSearch(nums,target, low, mid -1);
     		else return biSearch(nums,target, mid+1, high);
     	}else {
-    		if(nums[mid]<target && nums[high]>target) return biSearch(nums,target, mid+1, high);
+    		if(nums[mid]<=target && nums[high]>=target) return biSearch(nums,target, mid+1, high);
     		else return biSearch(nums,target, low, mid -1);
     	}
     	
     }
     
-    
-    
-    
+    public String sol38(int n) {
+        String ans = "1";
+        if (n== 1) return ans;
+
+        for (int i = 2; i <= n; i++) {
+        	String tmp ="";
+        	int j = 0;
+        	while(j < ans.length()){
+        		int count =1;
+
+        		while(j+count<ans.length()&&ans.charAt(j)==ans.charAt(j+count)) {count ++;}
+        		tmp+=Integer.toString(count);
+        		tmp+=ans.charAt(j);
+        		j+=count;
+        	}
+        	ans =tmp;
+        }
+        	
+        return ans;
+    }
+    //recursive version can be much better:
+    public String sol38p(int n) {
+        String ans = "1";
+        if (n== 1) return ans;
+        String pre = sol38p(n - 1);
+        StringBuilder tmp = new StringBuilder();
+        	int j = 0;
+        	while(j < pre.length()){
+        		int count =1;
+        		while(j+count<pre.length()&&pre.charAt(j)==pre.charAt(j+count)) {count ++;}
+        		tmp.append(count);
+        		tmp.append(pre.charAt(j));
+        		j+=count;
+        	}
+        return tmp.toString();
+    }
     
     
     

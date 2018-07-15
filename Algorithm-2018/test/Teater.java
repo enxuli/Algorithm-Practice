@@ -27,6 +27,10 @@ public class Teater {
 		String str33 = Integer.toString(sol33);
 		DisplaySol("33",str33);
 		
+		String ouput38 = sol.sol38(4);
+		String ouput38p = sol.sol38p(4);
+		DisplaySol("38",ouput38p);
+		
 	}
 	
 	public static void DisplaySol(String quizindex,String sol) {
