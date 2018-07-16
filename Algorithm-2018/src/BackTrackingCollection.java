@@ -144,20 +144,20 @@ public class BackTrackingCollection {
     }
 
 	private void backTrack131 (List<List<String>> ans,List<String> tmp,String target,String add,int start) {
-		if(add==target) {
+		if(add.equals(target)) {
             ans.add(new ArrayList<>(tmp));
 		}else {
-			for(int i = start+1; i < target.length();i++) {
+			for(int i = start+1; i <= target.length();i++) {
 				if(isPalindrome(target.substring(start, i))) {
 				tmp.add(target.substring(start, i));
-				backTrack131(ans,tmp,target,add + target.substring(start, i),i+1);
+				backTrack131(ans,tmp,target,add+target.substring(start, i),i);
 				tmp.remove(tmp.size() - 1);
 				}
 			}
 		}
 	}
 
-	private boolean isPalindrome(String substring) {
+	public boolean isPalindrome(String substring) {
 		int i = 0, j = substring.length()-1;
 		while(i<=j) {
 			if (substring.charAt(i)==substring.charAt(j)) {
@@ -166,6 +166,27 @@ public class BackTrackingCollection {
 			}else return false;
 		}
 		return true;
+	}
+	
+    public List<List<Integer>> sol77(int n, int k) {
+        List<List<Integer>> ans = new ArrayList<>();
+        int[] nums = new int[n]; 
+        for(int i = 0 ; i < n ; i++) { nums[i]=i+1; }
+        backTrack77(ans,new ArrayList<>(),nums, k, 0);
+        return ans;
+    }
+
+	private void backTrack77(List<List<Integer>> ans,List<Integer> tmp,int[] nums, int k, int start) {
+       List<Integer> flag = new ArrayList<>();
+		if(tmp.size()== k) {
+		ans.add(new ArrayList<>(tmp));
+		}else {
+			for(int i = start; i < nums.length;i++) {
+				tmp.add(nums[i]);
+				backTrack77(ans,tmp,nums,k,i+1);
+				tmp.remove(tmp.size() - 1);
+			}
+		}
 	}
 	
 	

@@ -32,8 +32,10 @@ public class Teater {
 		String ouput38p = sol.sol38p(4);
 		DisplaySol("38",ouput38p);
 		
-		
-		
+		String input131 = "aab";
+		List<List<String>> output131 = backsol.sol131(input131);
+		output131.get(1).size();
+		DisplaySol("131",output131.toString());
 	}
 	
 	public static void DisplaySol(String quizindex,String sol) {
