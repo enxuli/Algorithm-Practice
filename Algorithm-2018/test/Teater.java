@@ -3,6 +3,7 @@ import java.util.List;
 public class Teater {
 	public static void main(String[] args) {
 		Solutions sol = new Solutions();
+		BackTrackingCollection backsol = new BackTrackingCollection();
 		int[] input611 ={1,2,2,3,1,4,2};
 		int sol611 = sol.sol611(input611);
 		String str611 = Integer.toString(sol611);
@@ -30,6 +31,8 @@ public class Teater {
 		String ouput38 = sol.sol38(4);
 		String ouput38p = sol.sol38p(4);
 		DisplaySol("38",ouput38p);
+		
+		
 		
 	}
 	
