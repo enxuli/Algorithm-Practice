@@ -8,6 +8,9 @@ import java.lang.Math;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
+
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
+
 import java.util.Collections;
 
 public class BackTrackingCollection {
@@ -177,7 +180,6 @@ public class BackTrackingCollection {
     }
 
 	private void backTrack77(List<List<Integer>> ans,List<Integer> tmp,int[] nums, int k, int start) {
-       List<Integer> flag = new ArrayList<>();
 		if(tmp.size()== k) {
 		ans.add(new ArrayList<>(tmp));
 		}else {
@@ -189,5 +191,51 @@ public class BackTrackingCollection {
 		}
 	}
 	
-	
+    public boolean sol79(char[][] board, String word) {
+
+    	for (int i = 0; i<board.length; i++) {
+    		for(int j = 0 ; j < board[0].length;j++) {
+    			if(backTrack77(board,new ArrayList<>(),"",word, i, j, 0))return true;
+    		}
+    	}
+
+        return false;
+    }
+
+	private boolean backTrack77(char[][] board,List<int[]> path,String tmp,String word, int i, int j, int index) {
+		System.out.println(tmp);
+		List<int[]> pre = new ArrayList<>(path);
+		if(tmp.equals(word)) return true;
+		if(index<word.length() && word.charAt(index) == board[i][j] && !isContains(pre,new int[] {i,j})){
+		if(i<board.length-1){
+			path.add(new int[] {i,j});
+			backTrack77(board,path,tmp + board[i][j],word,i+1,j,index+1);
+			path.remove(path.size()-1);
+			}
+		if(i>0){
+			path.add(new int[] {i,j});
+			backTrack77(board,path,tmp + board[i][j],word,i-1,j,index+1);
+			path.remove(path.size()-1);
+			}
+		if(j<board[0].length-1) {
+			path.add(new int[] {i,j});
+			backTrack77(board,path,tmp + board[i][j],word,i,j+1,index+1);
+			path.remove(path.size()-1);
+		    }
+        
+		if(j>0){
+			path.add(new int[] {i,j});
+			backTrack77(board,path,tmp + board[i][j],word,i,j-1,index+1);
+			path.remove(path.size()-1);
+			}
+		}
+		return false;
+	}
+
+	private boolean isContains(List<int[]> pre, int[] is) {
+		for(int[] x : pre) {
+			if(Arrays.equals(x, is)) return true;
+		}
+		return false;
+	}
 }

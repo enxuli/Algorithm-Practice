@@ -36,6 +36,11 @@ public class Teater {
 		List<List<String>> output131 = backsol.sol131(input131);
 		output131.get(1).size();
 		DisplaySol("131",output131.toString());
+		
+		char[][] input79 = {{'A','A'}};
+		String input79p = "AAA";
+		String output79 = Boolean.toString(backsol.sol79(input79,input79p));
+		DisplaySol("79",output79);
 	}
 	
 	public static void DisplaySol(String quizindex,String sol) {
