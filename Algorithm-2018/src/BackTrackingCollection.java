@@ -191,51 +191,90 @@ public class BackTrackingCollection {
 		}
 	}
 	
-    public boolean sol79(char[][] board, String word) {
+        boolean[][] visitedPath;
+        public boolean sol79(char[][] board, String word) {
+            visitedPath = new boolean[board.length][board[0].length];
+        	for (int i = 0; i<board.length; i++) {
+        		for(int j = 0 ; j < board[i].length;j++) {
+        			if(backTrack77(board,"",word, i, j, 0))return true;
+        		}
+        	}
 
-    	for (int i = 0; i<board.length; i++) {
-    		for(int j = 0 ; j < board[0].length;j++) {
-    			if(backTrack77(board,new ArrayList<>(),"",word, i, j, 0))return true;
-    		}
+            return false;
+        }
+
+    	private boolean backTrack77(char[][] board,String tmp,String word, int i, int j, int index) {
+    		boolean result1=false,result2=false,result3=false,result4 = false;
+            if(tmp.equals(word)) return true;
+            if(i<0||j<0||i>=board.length||j>=board[0].length) return false;
+            if(word.charAt(index) != board[i][j])return false;
+            if(visitedPath[i][j])return false;
+    		
+            visitedPath[i][j]=true;
+    			result1= backTrack77(board,tmp + board[i][j],word,i+1,j,index+1);
+    			result2=backTrack77(board,tmp + board[i][j],word,i-1,j,index+1);
+    			result3=backTrack77(board,tmp + board[i][j],word,i,j+1,index+1);
+    			result4=backTrack77(board,tmp + board[i][j],word,i,j-1,index+1);
+    		
+    		boolean result = result1||result2||result3||result4;
+    		if (result) return result;
+            visitedPath[i][j]=false;
+    		return false;
     	}
+    	
+        public List<List<Integer>> sol216(int k, int n) {
+            List<List<Integer>> list = new ArrayList<>();
+            backtrack216(list, new ArrayList<>(), k, n, 1, 0);
+            return list;
+        }
 
-        return false;
-    }
-
-	private boolean backTrack77(char[][] board,List<int[]> path,String tmp,String word, int i, int j, int index) {
-		System.out.println(tmp);
-		List<int[]> pre = new ArrayList<>(path);
-		if(tmp.equals(word)) return true;
-		if(index<word.length() && word.charAt(index) == board[i][j] && !isContains(pre,new int[] {i,j})){
-		if(i<board.length-1){
-			path.add(new int[] {i,j});
-			backTrack77(board,path,tmp + board[i][j],word,i+1,j,index+1);
-			path.remove(path.size()-1);
-			}
-		if(i>0){
-			path.add(new int[] {i,j});
-			backTrack77(board,path,tmp + board[i][j],word,i-1,j,index+1);
-			path.remove(path.size()-1);
-			}
-		if(j<board[0].length-1) {
-			path.add(new int[] {i,j});
-			backTrack77(board,path,tmp + board[i][j],word,i,j+1,index+1);
-			path.remove(path.size()-1);
-		    }
+        private void backtrack216(List<List<Integer>> list, List<Integer> tempList,int k,int target, int start,int length){
+            if(target == 0&& length == k){
+                list.add(new ArrayList<>(tempList));
+            } else if (target > 0){
+                for(int i = start; i < 10; i++){
+                    tempList.add(i);
+                    backtrack216(list, tempList, k, target-i, i+1,length+1);
+                    tempList.remove(tempList.size() - 1);
+                    
+                }
+            }
+        }
         
-		if(j>0){
-			path.add(new int[] {i,j});
-			backTrack77(board,path,tmp + board[i][j],word,i,j-1,index+1);
-			path.remove(path.size()-1);
-			}
-		}
-		return false;
-	}
+        public List<String> sol93(String s) {
+            List<String> list = new ArrayList<>();
+            backtrack93(list, "", s, 0, 0);
+            return list;
+        }
 
-	private boolean isContains(List<int[]> pre, int[] is) {
-		for(int[] x : pre) {
-			if(Arrays.equals(x, is)) return true;
+        private void backtrack93(List<String> list, String tempList,String s, int start,int count){
+            if(count == 3&&s.length()-start>1&&s.substring(start,start+1).equals("0")) return;
+            if(count == 3 &&s.length()-start<=3 && s.length()>start && Integer.valueOf(s.substring(start,s.length()))<=255 ){
+                tempList+= s.substring(start,s.length());
+                list.add(tempList);
+            } else if (count < 3){
+                for(int i = start+1; i <= s.length(); i++){
+                    if(i-start<=3&&Integer.valueOf(s.substring(start,i))<=255){
+                        if(s.substring(start,start+1).equals("0")) {
+                        	backtrack93(list, tempList+s.substring(start,i)+".", s, i,count+1);
+                        	break;
+                        }
+                        backtrack93(list, tempList+s.substring(start,i)+".", s, i,count+1);
+                    }
+                }
+            }
+        }
+        
+        public int sol357(int n) {
+        	if(n == 0) return 1;
+        	if(n == 1) return 10;
+            return factorial(10,n)+((n-2>0)?(n-2)*factorial(9,n-2):0)+sol357( n - 2 );
+        }
+
+        private int factorial(int i, int n) {
+			if (n == 1) return i;
+			return i*factorial(i - 1, n - 1);
 		}
-		return false;
-	}
+
+
 }

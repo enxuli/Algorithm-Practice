@@ -41,6 +41,14 @@ public class Teater {
 		String input79p = "AAA";
 		String output79 = Boolean.toString(backsol.sol79(input79,input79p));
 		DisplaySol("79",output79);
+		
+		String input93 = "123023490";
+		List<String> output93 = backsol.sol93(input93);
+		DisplaySol("93",output93.toString());
+		
+		int input357 = 5;
+		int output357 = backsol.sol357(input357);
+		DisplaySol("357",Integer.toString(output357));
 	}
 	
 	public static void DisplaySol(String quizindex,String sol) {
