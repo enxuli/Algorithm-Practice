@@ -64,6 +64,41 @@ public class BFSCollection {
         return 1 + countNodes(n.left) + countNodes(n.right);
     }
     
+    public int getMinimumDifference(TreeNode root) {
+        int min = Integer.MAX_VALUE;
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode cur = root;
+        TreeNode pre = null;
+        while (cur!=null || !stack.isEmpty()){
+            while(cur != null){
+                stack.push(cur);
+                cur = cur.left;
+            }
+            cur = stack.pop();
+            if(pre != null && (cur.val - pre.val)<=min) min = cur.val - pre.val;
+            pre = cur;
+            cur = cur.right;
+        }
+        return min;
+    }
+    int minDiff = Integer.MAX_VALUE;
+    public int getMinimumDifference2(TreeNode root) {
+        helper(root,Integer.MIN_VALUE,Integer.MAX_VALUE);
+        return minDiff;
+    }
+    private void helper(TreeNode curr, int leftVal, int rightVal){
+        if(curr==null) return;
+        if(leftVal!=Integer.MIN_VALUE){
+            minDiff = Math.min(minDiff,curr.val - leftVal);
+        }
+        if(rightVal!=Integer.MAX_VALUE){
+        minDiff = Math.min(minDiff,rightVal - curr.val);
+        }
+        helper(curr.left,leftVal,curr.val);
+        helper(curr.right,curr.val,rightVal);
+    }
+    
+    
     
     
 }
