@@ -28,6 +28,18 @@ public class ListNode {
 	      ListNode(int x) { val = x; }
 	  }
 
+class Node {
+    public int val;
+    public List<Node> children;
+
+    public Node() {}
+
+    public Node(int _val,List<Node> _children) {
+        val = _val;
+        children = _children;
+    }
+};
+
 	//654 bad version
 	public TreeNode constructMaximumBinaryTree(int[] nums) {
         if (Arrays.equals(new int[]{}, nums)) return null;
@@ -121,7 +133,77 @@ public class ListNode {
         return left.val == right.val && isMirror(left.left,right.right) && isMirror(left.right,right.left);
     }
     
-    //
-	
+    
+
+    
+    //590 N-ary Tree Postorder Traversal
+    
+    List<Integer> list = new ArrayList<>();
+    public List<Integer> postorder(Node root) {
+        postorderDFS(root);
+        return list;
+    }
+    private void postorderDFS(Node root){
+        if(root == null) return;
+        for(Node child : root.children){
+            postorderDFS(child);
+        }
+        list.add(root.val);
+    }
+    //589. N-ary Tree Preorder Traversal
+    List<Integer> list2 = new ArrayList<>();
+    public List<Integer> preorder(Node root) {
+        preorderDFS(root);
+        return list2;
+    }
+    private void preorderDFS(Node root){
+        if(root == null) return;
+        list.add(root.val);
+        for(Node child : root.children){
+            preorderDFS(child);
+        }
+    }
+    
+    //589 iterative version
+    public List<Integer> preorder2(Node root) {
+        List<Integer> list = new ArrayList<>();
+        Node cur = root;
+        if (cur == null) return list;
+        
+        Stack<Node> s = new Stack<>();
+        s.push(cur);
+        
+        while(!s.isEmpty()){
+            cur = s.pop();
+            list.add(cur.val); ///preorder do here 
+            for(int i = cur.children.size()-1; i>=0; i--){ // with backforward child!!!
+                s.push(cur.children.get(i));
+            }
+        }
+        return list;
+    }
+    
+    //590 iterative
+    
+    public List<Integer> postorder2(Node root) {
+        List<Integer> list = new ArrayList<>();
+        if (root == null) return list;
+        
+        Stack<Node> stack = new Stack<>();
+        stack.add(root);
+        
+        while(!stack.isEmpty()) {
+            root = stack.pop();
+            list.add(root.val); ///postorder do here 
+            for(Node node: root.children) // with forward child!!!
+                stack.add(node);
+        }
+        Collections.reverse(list); // reverse in the end
+        return list;
+    }
+    
+
+    
+    
 	
 }

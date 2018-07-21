@@ -9,6 +9,9 @@ import java.lang.Math;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
+
+import Tree.TreeNode;
+
 import java.util.Collections;
 
 public class BTSCollection {
@@ -382,6 +385,12 @@ public class BTSCollection {
          return isSame(s.left, t.left) && isSame(s.right, t.right);
      }
      
-     
+     //700
+     public TreeNode searchBST(TreeNode root, int val) {
+         if(root == null || root.val == val) return root;
+         else{
+             return (root.val > val) ?  searchBST(root.left, val) : searchBST(root.right, val);
+         }
+     }
     
 }
