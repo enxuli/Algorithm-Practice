@@ -199,4 +199,69 @@ public class BFSCollection {
         ans.add(root.val);
     }
     
+    public TreeNode deleteNode(TreeNode root, int key) {
+        TreeNode cur = root;
+        TreeNode pre = null;
+        TreeNode tmp = null;
+        while(cur != null){
+            if (cur.val > key){
+                pre = cur;
+                cur = cur.left;
+            }else if (cur.val < key){
+                pre = cur;
+                cur = cur.right;
+            }else{
+                tmp = cur;
+                break;
+            }
+        }
+        if(tmp == null ) return root;
+        else if (tmp == root){
+            
+             if(tmp.left != null){
+                 root = tmp.left;
+                 cur = tmp.left;
+                 while(cur.right!=null){
+                     cur = cur.right;
+                 }
+                 cur.right = tmp.right;
+             }else {
+                 root = tmp.right;
+             }
+            
+        }else {
+            if(tmp.left != null){
+                if(pre.left == tmp)pre.left = tmp.left;
+                if(pre.right == tmp)pre.right = tmp.left;
+                cur = tmp.left;
+                while(cur.right!=null){
+                    cur = cur.right;
+                }
+                cur.right = tmp.right;
+            }else{
+                if(pre.left == tmp)pre.left = tmp.right;
+                if(pre.right == tmp)pre.right = tmp.right;
+            }
+        }
+        return root;
+    }
+    
+    public boolean findTarget653(TreeNode root, int k) {
+        return dfs(root, root,  k);
+    }
+    
+    public boolean dfs(TreeNode root,  TreeNode cur, int k){
+        if(cur == null)return false;
+        return search(root, cur, k - cur.val) || dfs(root, cur.left, k) || dfs(root, cur.right, k);
+    }
+    
+    public boolean search(TreeNode root, TreeNode cur, int value){
+        if(root == null)return false;
+        return (root.val == value) && (root != cur) 
+            || (root.val < value) && search(root.right, cur, value) 
+                || (root.val > value) && search(root.left, cur, value);
+    }
+    
+    
+    
 }
