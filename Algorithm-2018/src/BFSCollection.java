@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.lang.Math;
 import java.util.Random;
@@ -186,5 +187,16 @@ public class BFSCollection {
         return ans;
     }
     
+    LinkedList<Integer> anspostorderTraversal = new LinkedList<>();
+    public List<Integer> postorderTraversal(TreeNode root) {
+        dfspostorderTraversal( root );
+        return ans;
+    }
+    public void dfspostorderTraversal(TreeNode root){
+        if( root == null ) return ;
+        dfspostorderTraversal(root.left);
+        dfspostorderTraversal(root.right);
+        ans.add(root.val);
+    }
     
 }
