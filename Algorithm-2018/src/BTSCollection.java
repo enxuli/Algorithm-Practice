@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.Collections;
 
-public class BFSCollection {
+public class BTSCollection {
 	public class TreeNode {
 		      int val;
 		      TreeNode left;
@@ -19,6 +19,11 @@ public class BFSCollection {
 		      TreeNode(int x) { val = x; }
 		  }
 
+	  public class ListNode {
+		      int val;
+		      ListNode next;
+		      ListNode(int x) { val = x; }
+		  }
     public boolean isValidBST(TreeNode root) {
         return isValidBST(root, Long.MIN_VALUE, Long.MAX_VALUE);
     }
@@ -262,6 +267,121 @@ public class BFSCollection {
                 || (root.val > value) && search(root.left, cur, value);
     }
     
-    
+    //655
+    List<List<String>> ansprintTree = new ArrayList<>();
+    List<String> tmp = new ArrayList<>();
+    public List<List<String>> printTree(TreeNode root) {
+        int height = countHeight(root);
+        for (int i = 1; i <= height; i++){
+            tmp = new ArrayList<>();
+            bfs(root, i, i,height);
+            ansprintTree.add(new ArrayList<>(tmp));
+        }
+        return ansprintTree;
+    }
+    public int countHeight(TreeNode root)
+    {
+        if (root == null)
+           return 0;
+        else
+        {
+            int lheight = countHeight(root.left);
+            int rheight = countHeight(root.right);
+
+            if (lheight > rheight)
+                return(lheight+1);
+            else return(rheight+1); 
+        }
+    }
+     public void bfs(TreeNode cur, int level, int i, int height){
+
+        if (level == 1) {
+            for(int j = 0; j < (Math.pow(2,height-i+1)-2)/2; j++)
+                tmp.add("");
+            if(cur != null)tmp.add(Integer.toString(cur.val));
+            else tmp.add("");
+            for(int j = 0; j < (Math.pow(2,height-i+1)-2)/2; j++)
+                tmp.add("");
+            return;
+        }
+        else if (level > 1)
+        {
+            bfs((cur==null)? null:cur.left, level-1, i,height);
+            tmp.add("");
+            bfs((cur==null)? null:cur.right, level-1,i,height);
+        }
+    }
+     
+     //783
+     int minDiff2 = Integer.MAX_VALUE;
+     public int minDiffInBST(TreeNode root) {
+         dfs(root,Integer.MIN_VALUE,Integer.MAX_VALUE);
+         return minDiff;
+     }
+     
+     public void dfs(TreeNode root, int leftVal, int rightVal){
+         if(root == null) return;
+         if(leftVal != Integer.MIN_VALUE) minDiff= Math.min(minDiff, root.val-leftVal);
+         if(rightVal != Integer.MAX_VALUE) minDiff = Math.min(minDiff, rightVal- root.val);
+         dfs(root.left, leftVal, root.val);
+         dfs(root.right, root.val, rightVal);
+     }
+     
+     //563
+     
+     int result = 0;
+     
+     public int findTilt(TreeNode root) {
+         postOrderDFS(root);
+         return result;
+     }
+     public int postOrderDFS(TreeNode root){
+         if(root == null) return 0;
+         
+         int left = postOrderDFS(root.left);
+         int right = postOrderDFS(root.right);
+         
+         result+= Math.abs(left - right);
+         
+         return left + right + root.val;
+     }
+     
+     //103
+     public TreeNode sortedListToBST(ListNode head) {
+    	    if(head == null) return null;
+    	    if(head.next == null) return new TreeNode(head.val);
+    	    
+    	    ListNode fast = head, slow = head, tmp = null;
+    	    
+    	    while(fast != null && fast.next != null){
+    	        tmp = slow;
+    	        fast = fast.next.next;
+    	        slow = slow.next;
+    	    }
+    	    tmp.next = null;
+    	    
+    	    TreeNode root = new TreeNode(slow.val);
+    	    root.left = sortedListToBST(head);
+    	    root.right = sortedListToBST(slow.next);
+    	    
+    	    return root;
+    	}
+     //572
+     
+     public boolean isSubtree(TreeNode s, TreeNode t) {
+         if (s == null) return false;
+         return isSame(s, t)||isSubtree(s.left, t) || isSubtree(s.right, t);
+     }
+     
+     private boolean isSame(TreeNode s, TreeNode t) {
+         if (s == null ) return t == null;
+         if (t == null) return s == null;
+         
+         if (s.val != t.val) return false;
+         
+         return isSame(s.left, t.left) && isSame(s.right, t.right);
+     }
+     
+     
     
 }
