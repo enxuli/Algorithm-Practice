@@ -98,7 +98,93 @@ public class BFSCollection {
         helper(curr.right,curr.val,rightVal);
     }
     
+    Map<Integer, Integer> map = new HashMap<>();
+    public int[] findMode1(TreeNode root) {
+        dfs(root);
+        if (root == null) return new int[] {};
+        int max = Collections.max(map.values());
+        List<Integer> tmp = new ArrayList<>();
+        for (int x : map.keySet()){
+            if (map.get(x)==max) {
+                tmp.add(x);
+            }
+        }
+        int[] ans = new int[tmp.size()];
+        for(int i = 0; i < tmp.size(); i++){
+            ans[i] = tmp.get(i);
+        }
+        return ans;
+        
+    }
+    public void dfs(TreeNode root){
+        if (root == null) return;
+        dfs(root.left);
+        map.put(root.val, map.getOrDefault(root.val,0)+1);
+        dfs(root.right);
+    }
     
+    public TreeNode convertBST1(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode cur = root;
+        TreeNode pre = null;
+        
+        while (cur != null || !stack.isEmpty()){
+            while(cur != null){
+                stack.push(cur);
+                cur = cur.right;
+            }
+            cur = stack.pop();
+            if (pre != null) cur.val += pre.val;
+            pre = cur;
+            cur = cur.left;
+        }
+        return root;
+    }
+    
+    int sum = 0;
+    public TreeNode convertBST(TreeNode root) {
+        dfsconvertBST(root);
+        return root;
+    }
+    
+    private void dfsconvertBST(TreeNode root) {
+        if (root == null) return;
+        dfsconvertBST(root.right);
+        root.val += sum;
+        sum = root.val;
+        dfsconvertBST(root.left);
+    }
+    
+    List<Integer> ans = new ArrayList<>();
+    public List<Integer> preorderTraversal(TreeNode root) {
+        dfspreorderTraversal(root);
+        return ans;
+    }
+    
+    private void dfspreorderTraversal(TreeNode root){
+        if(root == null) return;
+        ans.add(root.val);
+        
+        dfspreorderTraversal(root.left);
+        dfspreorderTraversal(root.right);
+    }
+    
+    public List<Integer> preorderTraversal1(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        Stack<TreeNode> s = new Stack<>();
+        TreeNode cur = root;
+        
+        while(cur != null || !s.isEmpty()){
+            while(cur != null){
+                s.push(cur);
+                ans.add(cur.val);
+                cur = cur.left;
+            }
+            cur = s.pop();
+            cur = cur.right;
+        }
+        return ans;
+    }
     
     
 }
