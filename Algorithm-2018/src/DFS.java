@@ -85,5 +85,98 @@ public class DFS {
 	}
 	
 	
-	//
+	//112 misunderstand the problem with path root! to! leaf!
+    boolean ans = false;
+    public boolean hasPathSum(TreeNode root, int sum) {
+        dfs(root,sum);
+        return ans;
+    }
+    
+    private void dfs(TreeNode root, int sum){
+        if (root == null) return;
+        if(ans = subHasPathSum( root, sum, root.val)) return;
+        dfs(root.left, sum);
+        dfs(root.right, sum);
+    }
+    
+    private boolean subHasPathSum(TreeNode root, int target, int sum){
+        if (sum == target) return true;
+        else if(sum > target || root == null) return false;
+        return subHasPathSum(root.left,target,sum+ root.val)||subHasPathSum(root.right,target,sum+root.val);
+    }
+    
+  //112 misunderstand the problem with path root! to! leaf! leaf is a node with no child!!!! 
+    public boolean hasPathSum2(TreeNode root, int sum) {
+        if(root == null ) return false;
+        
+        if(sum - root.val == 0 && (root.left==null && root.right==null)) return true;
+        
+        return hasPathSum( root.left , sum-root.val)||hasPathSum( root.right , sum-root.val);
+    }
+    
+    //113
+    List<List<Integer>> ans113 = new ArrayList<>();
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        dfs(root, sum, new ArrayList<>());
+        return ans113;
+    }
+    private void dfs(TreeNode root, int sum, List<Integer> tmp){
+        if(root == null ) return;
+        tmp.add(root.val);
+        if(sum - root.val == 0 && (root.left==null && root.right==null)) ans113.add(new ArrayList<>(tmp));
+
+        dfs( root.left , sum-root.val, tmp);
+        dfs( root.right , sum-root.val, tmp);
+        tmp.remove(tmp.size()-1);
+    }
+    //114
+    private TreeNode previous;
+
+    public void flatten(TreeNode root) {
+            
+        if (root == null) return;
+        flatten(root.right);
+        flatten(root.left);
+        
+        root.right = previous;
+        root.left = null;
+        
+        previous = root;
+        
+
+    }
+    
+    //559
+    public int maxDepth(Node root) {
+        if(root == null) return 0;
+        int max = 0;
+        
+        for (Node child : root.children){
+            max = Math.max(max, maxDepth(child));
+        }
+        return max + 1;
+    }
+    //690
+    public int getImportance(List<Employee> employees, int id) {
+        Map<Integer, Employee> map=new HashMap<>();
+        for(Employee employee: employees){
+            map.put(employee.id,employee);
+        }
+        return dfs(map, id);
+        
+    }
+    private int dfs(Map<Integer, Employee> map, int id){
+        Employee tmp = map.get(id);
+        int totalImp = tmp.importance;
+
+        for(int i : tmp.subordinates){
+            totalImp+=dfs(map, i);
+        }
+        return totalImp;
+    }
+    
+    //695
+    
+    
+	
 }
