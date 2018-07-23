@@ -261,6 +261,48 @@ public class DFS {
         return Math.max(left,right) + root.val;
     }
     
+    //129
+    public int sumNumbers(TreeNode root) {
+        return dfssumNumbers(root,0);
+    }
+    
+    private int dfssumNumbers(TreeNode root, int str){
+        if(root == null) return 0;
+        if(root.left ==null&& root.right ==null) {
+            return str*10 + root.val;
+        }else{
+            return dfssumNumbers(root.left, str*10 + root.val)+dfssumNumbers(root.right, str*10 + root.val);
+        }
+    }
+    
+    //200
+    public int numIslands(char[][] grid) {
+        int count = 0;
+        for(int i = 0; i< grid.length; i++){
+            for(int j = 0; j< grid[0].length; j++){
+                if(grid[i][j] == '1'){
+                    dfs(grid,i,j);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
+    private void dfs(char[][] grid, int i, int j){
+        
+        if(i>=0 && i < grid.length && j>=0 && j<grid[0].length&& grid[i][j] == '1'){
+            grid[i][j] = '0';
+            dfs(grid, i+1, j);
+            dfs(grid, i-1, j);
+            dfs(grid, i, j+1);
+            dfs(grid, i, j-1);
+        }
+        
+    }
+    
+    
+    
     
     
     
