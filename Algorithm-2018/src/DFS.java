@@ -40,6 +40,16 @@ public class DFS {
 	    }
 	};
 	
+	class Employee {
+	    // It's the unique id of each node;
+	    // unique id of this employee
+	    public int id;
+	    // the importance value of this employee
+	    public int importance;
+	    // the id of direct subordinates
+	    public List<Integer> subordinates;
+	};
+	
 	//105
 	public TreeNode buildTree(int[] preorder, int[] inorder) {
 	    return build(preorder,inorder,0,0,preorder.length-1);
@@ -177,6 +187,82 @@ public class DFS {
     
     //695
     
-    
+    boolean[][] visited;
+    public int maxAreaOfIsland(int[][] grid) {
+        visited = new boolean[grid.length][grid[0].length];
+        int max = 0;
+        for(int i = 0; i< grid.length ;i++){
+            for(int j = 0; j< grid[0].length ;j++){
+                if(!visited[i][j] && grid[i][j]==1) {
+                    max = Math.max(max,areaOfIsland(grid,i,j));
+                }
+            }
+        }
+        return max;
+    }
+    public int areaOfIsland(int[][] grid, int i, int j) {
+        if( i >= 0 && i < grid.length && j >= 0 && j < grid[0].length ){
+            if(visited[i][j]) return 0;
+            visited[i][j] = true;
+            if(grid[i][j]== 1)return 1 + areaOfIsland(grid, i+1, j) + areaOfIsland(grid, i-1, j) + areaOfIsland(grid, i, j-1) + areaOfIsland(grid, i, j+1);
+        }
+        return 0;
+    }
 	
+    
+    //733
+    public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+        int preColor = image[sr][sc];
+        if(preColor== newColor) return image;
+        return dfs(image,sr,sc,preColor,newColor);
+    }
+    private int[][] dfs(int[][] image, int sr, int sc,int preColor,int newColor){
+        if(0 <= sr&&sr < image.length&&0 <= sc&&sc < image[0].length &&image[sr][sc] == preColor){
+            image[sr][sc] = newColor;
+            dfs(image,sr-1,sc,preColor,newColor);
+            dfs(image,sr+1,sc,preColor,newColor);
+            dfs(image,sr,sc-1,preColor,newColor);
+            dfs(image,sr,sc+1,preColor,newColor);
+        }
+        return image;
+    }
+    
+    //257
+    List<String> ansbinaryTreePaths = new ArrayList<>();
+    public List<String> binaryTreePaths(TreeNode root) {
+        dfs(root,"");
+        return ansbinaryTreePaths;
+    }
+    
+    private void dfs(TreeNode root, String str){
+        if (root == null) return;
+        if(root.left==null && root.right==null){
+        	ansbinaryTreePaths.add(str+root.val);
+        }
+        dfs(root.left,str + root.val + "->");
+        dfs(root.right,str + root.val + "->");
+    }
+    
+    //124
+    int max = Integer.MIN_VALUE;
+    public int maxPathSum(TreeNode root) {
+        dfs(root);
+        return max;
+    }
+    
+    private int dfs(TreeNode root){
+        if (root == null) return 0;
+        
+        int left = Math.max(0,dfs(root.left));
+        int right = Math.max(0,dfs(root.right));
+        
+        max = Math.max (max, left + right + root.val);
+        
+        return Math.max(left,right) + root.val;
+    }
+    
+    
+    
+    
+    
 }
