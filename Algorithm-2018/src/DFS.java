@@ -40,6 +40,12 @@ public class DFS {
 	    }
 	};
 	
+	  class UndirectedGraphNode {
+		      int label;
+		      List<UndirectedGraphNode> neighbors;
+		      UndirectedGraphNode(int x) { label = x; neighbors = new ArrayList<UndirectedGraphNode>(); }
+		  };
+	
 	class Employee {
 	    // It's the unique id of each node;
 	    // unique id of this employee
@@ -49,6 +55,11 @@ public class DFS {
 	    // the id of direct subordinates
 	    public List<Integer> subordinates;
 	};
+	  public class TreeLinkNode {
+		      int val;
+		      TreeLinkNode left, right, next;
+		      TreeLinkNode(int x) { val = x; }
+		  }
 	
 	//105
 	public TreeNode buildTree(int[] preorder, int[] inorder) {
@@ -301,10 +312,98 @@ public class DFS {
         
     }
     
+    //116
+    
+    int  count = 0;
+    TreeLinkNode previous;
+    public void connect(TreeLinkNode root) {
+        int height = getHeight(root);
+        for(int level = 1; level <= height; level ++){
+            dfs(root,level);
+            count = 0;
+        }
+    }
+    
+    private void dfs(TreeLinkNode root,int level){
+        if( level < 1) return;
+        dfs(root.left ,level - 1);
+        if(level == 1 ){
+            if(count == 0){
+                previous = root;
+                count++;
+            }else {
+                previous.next = root;
+                previous = root;
+                count++;
+            }
+        }
+        dfs(root.right,level - 1);
+        
+    }
+    
+    private int getHeight(TreeLinkNode root){
+        if (root == null) return 0;
+        return 1 + Math.max(getHeight(root.left),getHeight(root.right));
+    }
+    
+    //133
+    Map<Integer,UndirectedGraphNode> map = new HashMap<>();
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if(node == null) return null;
+        
+        if( map.containsKey(node.label)) return map.get(node.label);
+        
+        UndirectedGraphNode tmp = new UndirectedGraphNode(node.label);
+        map.put(tmp.label,tmp);
+        
+        for(UndirectedGraphNode neighbor : node.neighbors){
+            tmp.neighbors.add(cloneGraph(neighbor));
+        }
+        return tmp;
+    }
+    
+    //199 time consuming method
+    List<Integer> ansrightSideView = new ArrayList<>();
+    int countrightSideView;
+    public List<Integer> rightSideView(TreeNode root) {
+        int height = getHeight(root);
+        
+        for(int level = 1; level <= height; level++){
+        	countrightSideView = 0;
+            postOrderDfs(root, level);
+        }
+        return ansrightSideView;
+        
+    }
+    
+    private void postOrderDfs(TreeNode root, int level){
+        if (root == null || level < 1 ||countrightSideView >0) return;
+        postOrderDfs(root.right, level-1);
+        postOrderDfs(root.left, level-1);
+        if(level == 1) {ansrightSideView.add(root.val); countrightSideView ++;}
+    }
+    
+    private int getHeight(TreeNode root){
+        if (root == null) return 0;
+        return 1 + Math.max(getHeight(root.left),getHeight(root.right));
+    }
     
     
+    //199 one traversal method
+    public List<Integer> rightSideView2(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        ans =  dfs(root,ans,0);
+        return ans;
+        
+    }
     
-    
-    
+    private List<Integer> dfs(TreeNode root, List<Integer> ans, int level){
+        if (root == null ) return ans;
+        if(level == ans.size()) {ans.add(root.val);}
+        dfs(root.right,ans, level+1);
+        dfs(root.left,ans,level+1);
+        
+        return ans;
+    }
     
 }
