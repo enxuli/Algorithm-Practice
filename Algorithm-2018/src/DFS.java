@@ -10,10 +10,22 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
+import DFS.NestedInteger;
+
 import java.util.Collections;
 
 
 public class DFS {
+
+	public interface NestedInteger {
+
+		boolean isInteger();
+
+		List<NestedInteger> getList();
+
+		int getInteger();
+
+	}
 
 	public class TreeNode {
 	      int val;
@@ -405,5 +417,99 @@ public class DFS {
         
         return ans;
     }
+    // sum problem, do not given sum a memory !!! initiate sum in every recursive stack!!!!
+    //return sum to the upper stack!
+    //339. Nested List Weight Sum
+    
+    public int depthSum(List<NestedInteger> nestedList) {
+        return depthSum(nestedList, 1);
+    }
+
+    public int depthSum(List<NestedInteger> list, int depth) {
+        int sum = 0;
+        for (NestedInteger n : list) {
+            if (n.isInteger()) {
+                sum += n.getInteger() * depth;
+            } else {
+                sum += depthSum(n.getList(), depth + 1);
+            }
+        }
+        return sum;
+    }
+    
+    
+    //394 intuitive method come up by me 
+    public String decodeString(String s) {
+        return dfs(s);
+     }
+     
+     private String dfs(String s){
+         Stack<Integer> stackstart = new Stack<>(), stackend = new Stack<>();
+         Stack<String>stackmul = new Stack<>();
+         int left = 0 , right = 0;
+         String tmpwhole ="";
+         String multmp = "";
+         for (int i = 0; i < s.length(); i ++){
+             while((s.charAt(i)<='9'&&s.charAt(i)>='0')){multmp +=s.charAt(i); i++;}
+             if(s.charAt(i) == '[') {
+                 left ++;
+                 stackstart.push(i+1);
+                 stackmul.push(multmp);
+                 multmp = "";
+             }
+             if(s.charAt(i) == ']') {
+                 right ++;
+                 stackend.push(i);
+             }
+             if(left == 0){
+                 tmpwhole += s.substring(i,i+1);
+             }
+             if(left == right &&left !=0){
+                     for(int j = 0; j < left-1; j++){
+                         stackstart.pop();
+                         stackmul.pop();
+                     }
+                     int deepstart = stackstart.pop();
+                     int deepend = stackend.pop();
+                     int mul = Integer.valueOf(stackmul.pop());
+                     String tmppart ="";
+                     for (int k = 0 ; k < mul ; k ++){
+                         tmppart += s.substring(deepstart,deepend);
+                         System.out.println(tmppart);
+                     }
+                 tmpwhole += dfs(tmppart);
+                 left = right = 0;
+             }
+         }
+     
+         return tmpwhole;
+     }
+    
+    //394 global position and StringBuilder version
+     
+     int postion = 0;
+     public String decodeString2(String s) {
+        StringBuilder sb = new StringBuilder();
+         String mul = "";
+         for(int i = postion; i < s.length(); i ++){
+             if(s.charAt(i)!= '[' &&s.charAt(i)!= ']'&&!Character.isDigit(s.charAt(i))){
+                 sb.append(s.charAt(i));
+             }else if(Character.isDigit(s.charAt(i))){
+                 mul += s.charAt(i);
+             }else if(s.charAt(i)== '['){
+                 postion = i + 1;
+                 String next = decodeString(s);
+                 for(int j = Integer.valueOf(mul); j >0 ; j--) sb.append(next);
+                 mul = "";
+                 i = postion;
+             }else if(s.charAt(i)== ']'){
+                 postion = i ;
+                 return sb.toString();
+             }
+         }
+         return sb.toString();      
+     }
+     
+     
     
 }
