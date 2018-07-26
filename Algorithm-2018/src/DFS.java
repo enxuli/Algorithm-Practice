@@ -543,5 +543,56 @@ public class DFS {
          return true;
      }
      
+     //329 run time exceeded (atempt to do memoization)
+     int[][] results;
+     public int longestIncreasingPath(int[][] matrix) {
+         if (matrix.length == 0) return 0;
+         results = new int [matrix.length][matrix[0].length];
+         for (int k = 0 ; k < results.length;k++)Arrays.fill(results[k],0);
+         int ans = 0;
+         for(int i=0; i < matrix.length; i++){
+             for (int j=0; j < matrix[0].length; j++){
+                 ans = Math.max(dfs(matrix, i , j, Integer.MIN_VALUE, 0 , 0),ans);
+             }
+         }
+         return ans;
+     }
+     
+     private int dfs(int[][] matrix, int i , int j, int previous, int prei, int prej){
+         if( i >=0 && i< matrix.length && j >=0 && j< matrix[0].length ){
+         if( matrix[i][j]<= previous) return results[prei][prej];
+         else {
+         results[i][j]= Math.max(Math.max(dfs(matrix,i-1,j,matrix[i][j],i,j),dfs(matrix,i+1,j,matrix[i][j],i,j)),Math.max(dfs(matrix,i,j+1,matrix[i][j],i,j),dfs(matrix,i,j-1,matrix[i][j],i,j)));
+         return 1 + results[i][j];
+         }
+         }
+         return 0;
+     }
+     //329 memoization
+     
+     private static final int[][] dirs = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+     private int m, n;
+
+     public int longestIncreasingPath2(int[][] matrix) {
+         if (matrix.length == 0) return 0;
+         m = matrix.length; n = matrix[0].length;
+         int[][] cache = new int[m][n];
+         int ans = 0;
+         for (int i = 0; i < m; ++i)
+             for (int j = 0; j < n; ++j)
+                 ans = Math.max(ans, dfs(matrix, i, j, cache));
+         return ans;
+     }
+
+     private int dfs(int[][] matrix, int i, int j, int[][] cache) {
+         if (cache[i][j] != 0) return cache[i][j];
+         for (int[] d : dirs) {
+             int x = i + d[0], y = j + d[1];
+             if (0 <= x && x < m && 0 <= y && y < n && matrix[x][y] > matrix[i][j])
+                 cache[i][j] = Math.max(cache[i][j], dfs(matrix, x, y, cache));
+         }
+         return ++cache[i][j];
+     }
+ 
     
 }
