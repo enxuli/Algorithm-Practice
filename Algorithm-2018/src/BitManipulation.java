@@ -13,7 +13,32 @@ public class BitManipulation {
         }
         return bitCount;
     }
-	
+    
+    //231. Power of Two
+    public boolean isPowerOfTwo(int n) {
+        int bitCount = 0;
+        for (int bit = 0 ; bit < 32; bit++ ) bitCount += (n>>bit) & 1;
+        return  (bitCount == 1 && n > 0) ;
+    }
+    
+    public boolean isPowerOfTwo2(int num) {
+        int bitCount = 0;
+        return  ((num&(num-1)) == 0 && num > 0) ;
+    }
+    
+	//342 Power of Four
+    public boolean isPowerOfFour1(int n) {
+        int bitCount = 0;
+        int checker = 0x55555554;
+        for (int bit = 0 ; bit < 32; bit++ ) bitCount += (n>>bit) & 1;
+        return  (bitCount == 1 && n > 0 &&  (n & checker) == n || n ==1) ;
+    } // check there is noly 1 bit using num&(num-1) ==0!!!!!
+    //using compare check !!!!
+
+        public boolean isPowerOfFour(int num) {
+              return num > 0 && (num&(num-1)) == 0 && (num & 0x55555555) != 0;
+        }
+    
 // 477 brute force!! n^2
 	
     public int totalHammingDistance(int[] nums) {
