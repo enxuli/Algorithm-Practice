@@ -27,4 +27,23 @@ public class LinkedList {
         else return false;
     }
     
+    //369. Plus One Linked List
+    public ListNode plusOne(ListNode head) {
+        if (dfs(head) == 1) {
+            ListNode ans = new ListNode(1); 
+            ans.next = head;
+            return ans;
+        }else return head;
+    }
+    private int dfs(ListNode head){
+            int tmp = head.val; 
+            int c = (head.next==null)? 0:dfs(head.next);
+            head.val = (tmp + c + (head.next==null? 1 : 0))%10; 
+            return (tmp + c + (head.next==null? 1 : 0))/10; 
+        
+    }
+    
+    
+    
+    
 }
