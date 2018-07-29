@@ -1,6 +1,20 @@
 
 public class Math2 {
 
+	//7. Reverse Integer
+    public int reverse(int x) {
+        int digits = x;
+        int result = 0;
+        
+        while(digits!=0){
+            int tail = digits%10;
+            result = result*10 + tail;
+            if(result%10 != tail) return 0;
+            digits/=10;
+        }
+        return result;
+        
+    }
 	
 	//264. Ugly Number II brute force
     public int nthUglyNumber(int n) {
