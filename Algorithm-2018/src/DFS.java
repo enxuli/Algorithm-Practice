@@ -593,6 +593,68 @@ public class DFS {
          }
          return ++cache[i][j];
      }
+     //542 DFS brilliantly using a value to compare like the longest ascending path in matrix!!!!
+     private int m, n;
+     private int[][] dirs = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+     public int[][] updateMatrix(int[][] matrix) {
+         m = matrix.length; n = matrix[0].length;
+         
+         for(int i = 0; i < m; ++i){
+             for (int j = 0; j < n; ++j){
+                 if (!hasZeroNeighbor(matrix,i,j)&& matrix[i][j] ==1) matrix[i][j] = Integer.MAX_VALUE;
+             }
+         }
+         
+         for(int i = 0; i < m; ++i){
+             for (int j = 0; j < n; ++j){
+                if(matrix[i][j] ==1) { // margin
+                    dfs(matrix,i,j,-1);
+                }
+             }
+         }
+         return matrix;
+     }
+     
+     private void dfs(int[][] matrix, int i, int j, int value){
+         if(matrix[i][j] <= value) return; //wont repeating go close to the '0', this is genius !!!!
+         if(value > 0) matrix[i][j] = value; 
+         for(int[] dir : dirs){
+             int x = i + dir[0]; int y = j + dir[1];
+             if(x >= 0 && x < m && y >= 0 && y < n ){
+                     dfs(matrix,x,y,matrix[i][j]+1);
+             }
+         }
+     }
+     
+     private boolean hasZeroNeighbor(int[][] matrix, int x, int y){
+
+         if(x>0&&matrix[x-1][y]==0) return true;
+         if(x<matrix.length-1&&matrix[x+1][y]==0) return true;
+         if(y>0&&matrix[x][y-1]==0) return true;
+         if(y<matrix[0].length-1&&matrix[x][y+1]==0) return true;
+         return false;
+     }
+     //402 dfs version
+     List<List<Integer>> ans402 = new ArrayList<>();
+     List<Integer> tmp = new ArrayList<>();
+     public List<List<Integer>> levelOrder(Node root) {
+
+         bfs(root,0);
+         return ans402;
+     }
+     
+     private void bfs(Node cur, int level){
+         if(cur == null) return;
+         if(level >= ans402.size()) ans402.add(new ArrayList<>());
+         ans402.get(level).add(cur.val);
+
+         for(Node child : cur.children){
+             bfs(child, level+1);
+         }
+         
+     }
+     
+     
  
     
 }
