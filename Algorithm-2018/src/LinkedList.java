@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class LinkedList {
@@ -8,6 +10,59 @@ public class LinkedList {
 		     ListNode next;
 		     ListNode(int x) { val = x; }
 		 }
+	// 19. Remove Nth Node From End of List Space O(n)version!
+	public ListNode removeNthFromEnd(ListNode head, int n) {
+    List<ListNode> list = new ArrayList<>();
+    ListNode dummyHead = new ListNode(0);
+    dummyHead.next = head;
+    ListNode cur = dummyHead;
+    int count = 0;
+    while(cur!=null){
+        count ++;
+        list.add(cur);
+        cur = cur.next;
+    }
+    list.get(count-n-1).next = list.get(count-n-1).next.next;
+    return dummyHead.next;  
+	}
+	// space(1)  time O(n) version:
+    public ListNode removeNthFromEnd2(ListNode head, int n) {
+        ListNode dummyhead = new ListNode(0);
+        dummyhead.next = head;
+        ListNode fast = dummyhead;
+        ListNode slow = dummyhead;
+        for(int i = 0; i < n + 1; i ++){
+            fast = fast.next;
+        }
+        while(fast != null){
+            fast= fast.next;
+            slow= slow.next;
+        }
+        slow.next = slow.next.next;
+        return dummyhead.next;
+    }
+    
+    //61. Rotate List brute force of the rotate, realize every swift!
+    public ListNode rotateRight(ListNode head, int k) {
+        if(head == null || head.next==null) return head;
+        ListNode newhead = head;
+        ListNode pretail = head;
+
+        for(int i = 0; i < k; i ++){
+            newhead = head;
+            while(newhead.next!=null){
+                pretail = newhead;
+                newhead = newhead.next;
+            }
+            newhead.next = head;
+            pretail.next =null;
+            head = newhead;
+        }
+        
+        return head;
+    }
+    
+	
 	
 	//92. Reverse Linked List II  actually using a two pointers to make it a insertion
 	 public ListNode reverseBetween(ListNode head, int m, int n) {
@@ -62,6 +117,7 @@ public class LinkedList {
         
     }
     // Using a fast to chase the slow, then using other slow to meet the slow at the beginning
+    // this pattern is used a lot of scenario!!!  FAST AND SLOW CHASING!!
     public ListNode detectCycle2(ListNode head) {
         if(head == null || head.next == null)return null;
         // ListNode dummy = new ListNode(0);

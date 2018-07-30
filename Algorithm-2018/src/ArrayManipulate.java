@@ -82,6 +82,33 @@ public class ArrayManipulate {
         }
         else return digits;
     }
+    
+    //189. Rotate Array
+    
+    
+    
+    //259 3Sum smaller sum!!! always transfor to the two pointer or hashtable search!!(O(n))
+    
+    public int threeSumSmaller(int[] nums, int target) {
+        int ans = 0;
+        Arrays.sort(nums);
+        for(int i = 0; i < nums.length -2; i++ ){
+            int j = i + 1;
+            int k = nums.length-1;
+            while(j < k){
+                int sum = nums[i]+ nums[j] + nums[k];
+                if(sum>=target) k--;
+                else {
+                    ans+= k - j;
+                    j++;
+                }
+            }
+        }
+        return ans;
+    }
+    
+    
+    
     //611. Valid Triangle Number
     // using a three pointers method to do compare search!!!
     public int triangleNumber(int[] nums) {
