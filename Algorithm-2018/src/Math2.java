@@ -15,6 +15,7 @@ public class Math2 {
         return result;
         
     }
+    
 	
 	//264. Ugly Number II brute force
     public int nthUglyNumber(int n) {

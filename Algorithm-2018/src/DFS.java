@@ -638,7 +638,7 @@ public class DFS {
      List<List<Integer>> ans402 = new ArrayList<>();
      List<Integer> tmp = new ArrayList<>();
      public List<List<Integer>> levelOrder(Node root) {
-
+    	 List<Charator> an = new Ar
          bfs(root,0);
          return ans402;
      }

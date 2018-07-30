@@ -1,3 +1,5 @@
+import java.util.HashSet;
+import java.util.Set;
 
 public class LinkedList {
 
@@ -6,6 +8,110 @@ public class LinkedList {
 		     ListNode next;
 		     ListNode(int x) { val = x; }
 		 }
+	
+	//92. Reverse Linked List II  actually using a two pointers to make it a insertion
+	 public ListNode reverseBetween(ListNode head, int m, int n) {
+		 if(head == null) return null;
+		    ListNode dummy = new ListNode(0); // create a dummy node to mark the head of this list
+		    dummy.next = head;
+		    ListNode pre = dummy; // make a pointer pre as a marker for the node before reversing
+		    for(int i = 0; i<m-1; i++) pre = pre.next;
+		    
+		    ListNode start = pre.next; // a pointer to the beginning of a sub-list that will be reversed
+		    ListNode then = start.next; // a pointer to a node that will be reversed
+		    
+		    // 1 - 2 -3 - 4 - 5 ; m=2; n =4 ---> pre = 1, start = 2, then = 3
+		    // dummy-> 1 -> 2 -> 3 -> 4 -> 5
+		    
+		    for(int i=0; i<n-m; i++)
+		    {
+		        start.next = then.next;
+		        then.next = pre.next;
+		        pre.next = then;
+		        then = start.next;
+		    }
+		    
+		    // first reversing : dummy->1 - 3 - 2 - 4 - 5; pre = 1, start = 2, then = 4
+		    // second reversing: dummy->1 - 4 - 3 - 2 - 5; pre = 1, start = 2, then = 5 (finish)
+		    
+		    return dummy.next;
+		    }
+	
+	
+	//141. LinkedList cycle
+    public boolean hasCycle(ListNode head) {
+        if(head == null) return false;
+        
+        ListNode fast = head;
+        ListNode slow = head;
+        while(fast!=null&&fast.next!=null){
+            fast = fast.next.next;
+            slow = slow.next;
+            if (fast!=null &&fast.val == slow.val) return true;
+        }
+        return false;
+    }
+    //142 LinkedList cycle II return the cycle beginning
+    Set<ListNode> loop = new HashSet();
+    public ListNode detectCycle(ListNode head) {
+        if(head == null) return null;
+        if(!loop.contains(head)) {
+            loop.add(head);
+            return detectCycle(head.next);
+        }else return head;
+        
+    }
+    // Using a fast to chase the slow, then using other slow to meet the slow at the beginning
+    public ListNode detectCycle2(ListNode head) {
+        if(head == null || head.next == null)return null;
+        // ListNode dummy = new ListNode(0);
+        // dummy.next = head;
+        ListNode slow = head,fast = head;
+        
+        
+        while(fast!=null && fast.next !=null){
+            slow = slow.next;
+            fast = fast.next.next;
+            if(fast == slow)
+                break;
+        }
+        if(fast!=slow)return null;
+        slow = head;
+        while(slow!=fast){
+            slow = slow.next;
+            fast = fast.next;
+        }
+        return slow;
+    }
+    
+    //206 reverse LinkedList
+    public ListNode reverseList(ListNode head) {
+        if (head == null) return null;
+        ListNode tmp = null;
+        ListNode next = null;
+        while(head.next!=null){
+            next = head.next;
+            head.next = tmp;
+            tmp = head;
+            head = next;
+        }
+        head.next = tmp;
+        return head;
+    }
+    //206 recursion
+    public ListNode reverseList2(ListNode head) {
+
+        return reverseListInt(head, null);
+    }
+
+    private ListNode reverseListInt(ListNode cur, ListNode pre) {
+        if (cur == null)
+            return pre;
+        ListNode next = cur.next;
+        cur.next = pre;
+        return reverseListInt(next, cur);
+    }
+	
 	
     public boolean isPalindrome(ListNode head) {
         if(head == null ||head.next == null) return true;
@@ -42,6 +148,9 @@ public class LinkedList {
             return (tmp + c + (head.next==null? 1 : 0))/10; 
         
     }
+    
+    //
+    
     
     
     
