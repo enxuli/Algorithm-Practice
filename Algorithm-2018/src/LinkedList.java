@@ -41,7 +41,65 @@ public class LinkedList {
         slow.next = slow.next.next;
         return dummyhead.next;
     }
+    //24. Swap Nodes in Pairs iterative version
+    public ListNode swapPairs(ListNode head) {
+        ListNode dummyHead = new ListNode(0);
+        dummyHead.next = head;
+        ListNode pre = dummyHead;
+        while (head!=null && head.next!=null){
+            ListNode tmp = head.next;
+            pre.next = pre.next.next;
+            head.next = head.next.next;
+            tmp.next = head;
+            pre = head;
+            head = head.next;
+        }
+        return dummyHead.next;
+        
+    }
+    // recursive version 
+    public ListNode swapPairs2(ListNode head) {
+        if ((head == null)||(head.next == null))
+            return head;
+        ListNode n = head.next;
+        head.next = swapPairs(head.next.next);
+        n.next = head;
+        return n;
+    }
     
+    //24 merge k sort!
+    
+    
+    //25. Reverse Nodes in k-Group
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if(k==1||head==null) return head;
+        int len = getLen(head);
+        int numGroup = len / k;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode pre = dummy;
+        for (int i = 0; i < numGroup; i++){
+            pre.next=reverse(pre.next,k);
+            for (int j = 0; j < k; j++) pre = pre.next;
+        }
+        return dummy.next;
+    }
+    private int getLen(ListNode head){
+        if(head == null) return 0;
+        return 1+getLen(head.next);
+    }
+    private ListNode reverse(ListNode head,int k){
+        ListNode cur = head.next;
+        ListNode tmp = head;
+        for(int i = 0 ; i < k - 1 ; i++){
+            head.next = head.next.next;
+            cur.next = tmp;
+            tmp = cur;
+            cur = head.next;
+        }
+        return tmp;
+        
+    }
     //61. Rotate List brute force of the rotate, realize every swift!
     public ListNode rotateRight(ListNode head, int k) {
         if(head == null || head.next==null) return head;
@@ -62,7 +120,35 @@ public class LinkedList {
         return head;
     }
     
-	
+    //82. Remove Duplicates from Sorted List II
+    public ListNode deleteDuplicates1(ListNode head) {
+        if(head == null || head.next == null) return head;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode pre = dummy;
+        while(head!=null&&head.next!=null){
+            if(head.val != head.next.val) {
+                head = head.next;
+                pre = pre.next;
+            }else{
+            while(head.next!=null && head.val == head.next.val){
+                head = head.next;
+            }
+            pre.next = head.next;
+                head=head.next;
+            }
+        }
+        return dummy.next;
+
+    }
+    
+	//83. Remove Duplicates from Sorted List
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head == null || head.next == null) return head;
+        if(head.val == deleteDuplicates(head.next).val){ head.next = head.next.next;}
+        return head;
+        
+    }
 	
 	//92. Reverse Linked List II  actually using a two pointers to make it a insertion
 	 public ListNode reverseBetween(ListNode head, int m, int n) {
@@ -138,6 +224,76 @@ public class LinkedList {
             fast = fast.next;
         }
         return slow;
+    }
+    //148. Sort List using the merge sort to achieve all O(n log n)!!!!!!
+    public ListNode sortList(ListNode head) {
+        return partition(head);
+    }
+    private ListNode partition(ListNode head){
+        if(head ==null || head.next ==null) return head;
+        ListNode fast = head;
+        ListNode slow = head;
+        ListNode pre = null;
+        while (fast!=null && fast.next!=null){
+            pre = slow;
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        pre.next = null;
+        
+        ListNode left = partition(head);
+        ListNode right = partition(slow);
+        
+        return merge(left,right);    
+    }
+    private ListNode merge(ListNode a, ListNode b){
+        ListNode head = new ListNode(0), cur = head;
+        while(a!=null && b!=null){
+            if(a.val<b.val){
+                cur.next = a; 
+                cur = cur.next;
+                a = a.next;
+            }else {
+                cur.next = b; 
+                cur = cur.next;
+                b = b.next;
+            }
+        }
+        
+        if(a == null) cur.next = b;
+        if(b == null) cur.next = a;
+        
+        return head.next;
+    }
+    
+    //160. Intersection of Two Linked Lists there is problem here!!!!!!!!!!!!!
+    public static ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+
+        //boundary check
+        if(headA == null || headB == null) return null;
+        ListNode ans = null;
+        ListNode a = headA;
+        ListNode b = headB;
+
+        //if a & b have different len, then we will stop the loop after second iteration
+        while( a != null||b!=null){
+            //for the end of first iteration, we just reset the pointer to the head of another linkedlist
+            if(a!=null&&b!=null&&a.val==b.val) {
+                if(isIntersect(a,b)) {
+                    ans = a;
+                    return ans;
+                }
+            }
+            a = a == null? headB : a.next;
+            b = b == null? headA : b.next;    
+        }
+    
+        return ans;
+    }
+    private static boolean isIntersect(ListNode a, ListNode b){
+        if(a == null && b == null) return true;
+        if(a.val != b.val) return false;
+        return isIntersect(a.next, b.next);
     }
     
     //206 reverse LinkedList
