@@ -189,6 +189,25 @@ public class LinkedList {
         else return false;
     }
     
+    //328 328. Odd Even Linked List
+    public ListNode oddEvenList(ListNode head) {
+        if (head == null) return head;
+        ListNode dummyEven = new ListNode(0);
+        dummyEven.next = head.next;
+        ListNode odd = head;
+        ListNode even = head.next;
+        int count = 0;
+        while(even!=null&&even.next!=null){
+            odd.next = odd.next.next;
+            odd = odd.next;
+            even.next = even.next.next;
+            even =even.next;
+        }
+        odd.next = dummyEven.next;
+        //System.out.println(ans.next.val);
+        return head;
+    }
+    
     //369. Plus One Linked List
     public ListNode plusOne(ListNode head) {
         if (dfs(head) == 1) {
