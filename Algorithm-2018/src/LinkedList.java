@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 public class LinkedList {
 
@@ -139,7 +140,6 @@ public class LinkedList {
             }
         }
         return dummy.next;
-
     }
     
 	//83. Remove Duplicates from Sorted List
@@ -225,6 +225,37 @@ public class LinkedList {
         }
         return slow;
     }
+    //147 insertion sorting 
+    public ListNode insertionSortList(ListNode head) {
+        if (head == null) return head;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode cur = head.next;
+        ListNode precur = head;
+        while(cur!=null){
+            ListNode ordered = dummy.next;
+            ListNode preorder = dummy;
+            
+            while(ordered!=cur){
+                if(ordered.val > cur.val){
+                    preorder.next = new ListNode(cur.val);
+                    preorder.next.next = ordered;
+                    break;
+                }
+                preorder = ordered;
+                ordered = ordered.next;
+            }
+            if (ordered != cur){
+                precur.next = precur.next.next;
+            }else precur = cur;
+            cur = cur.next;
+            
+        }
+        cur = null;
+        return dummy.next;
+    }
+    
+    
     //148. Sort List using the merge sort to achieve all O(n log n)!!!!!!
     public ListNode sortList(ListNode head) {
         return partition(head);
@@ -380,7 +411,39 @@ public class LinkedList {
         
     }
     
-    //
+    //445. Add Two Numbers II
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        int c = 0;
+        ListNode head = new ListNode(0);
+        
+        Stack<Integer> a = pushInStack(l1);
+        Stack<Integer> b = pushInStack(l2);
+        
+        while(!a.isEmpty()||!b.isEmpty()){
+            int tmp = (a.isEmpty()? 0:a.pop()) +(b.isEmpty()?0:b.pop())+c;
+            int sum = tmp%10;
+            c = tmp/10;
+            ListNode insert = new ListNode(sum);
+            insert.next = head.next;
+            head.next = insert;
+        }
+        if(c == 1){            
+            ListNode insert = new ListNode(1);
+            insert.next = head.next;
+            head.next = insert;
+        }
+        
+        return head.next;
+        
+    }
+    private static Stack<Integer> pushInStack(ListNode head){
+        Stack<Integer> res = new Stack<>();
+        while(head!=null){
+            res.push(head.val);
+            head = head.next;
+        }
+        return res;
+    }
     
     
     
