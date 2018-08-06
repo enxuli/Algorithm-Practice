@@ -1,6 +1,27 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class HashMapCollection {
 
+	//290. Word Pattern！！  using string[] str.split('')!!!
+	 public boolean wordPattern(String pattern, String str) {
+	        String[] strs = str.split(" ");
+	        if (strs.length != pattern.length()) return false;
+	        HashMap<Character,String> map = new HashMap<Character,String>();
+	        for (int i = 0; i < strs.length; i++){
+	            char c = pattern.charAt(i);
+	            if (!map.containsKey(c)){
+	                if (map.containsValue(strs[i])) return false;
+	                map.put(c, strs[i]);
+	            }else{
+	                if (!map.get(c).equals(strs[i])) return false;
+	            }
+	        }
+	            return true;
+	    }
 	//599. Minimum Index Sum of Two Lists
     public String[] findRestaurant(String[] list1, String[] list2) {
         int min = Integer.MAX_VALUE;
@@ -24,4 +45,6 @@ public class HashMapCollection {
         }
         return ans.toArray(new String[ans.size()]);
     }
+    
+    
 }

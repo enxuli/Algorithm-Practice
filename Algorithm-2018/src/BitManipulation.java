@@ -79,6 +79,21 @@ public class BitManipulation {
         }
         
         
+        
+        //405. Convert a Number to Hexadecimal
+        // we need to know that the >> arithmetical shift and >>> logical shift
+        public String toHex(int num) {
+            if (num == 0) return "0";
+            
+            char[] hash=new char[]{'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+            StringBuilder sb = new StringBuilder(); 
+            while(num != 0){
+                char c = hash[num & 15];
+                sb.append(c);
+                num >>>= 4;
+            }
+            return sb.reverse().toString();
+        }
     
 // 477 brute force!! n^2
 	

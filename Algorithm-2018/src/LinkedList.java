@@ -149,6 +149,33 @@ public class LinkedList {
         return head;
         
     }
+    
+    //86. Partition List
+    public ListNode partition(ListNode head, int x) {
+        ListNode dummyLess = new ListNode(0);
+        ListNode less = dummyLess;
+        
+        ListNode dummyEqMore = new ListNode(0);
+        ListNode eqMore = dummyEqMore;
+        
+        ListNode cur = head;
+
+        while(cur!=null){
+            if(cur.val < x){
+                less.next = cur;
+                less = cur;
+            }else{
+                eqMore.next = cur;
+                eqMore =cur;
+            }
+            cur = cur.next;
+        }
+        
+        eqMore.next = null;
+        less.next = dummyEqMore.next;
+        return dummyLess.next;
+        
+    }
 	
 	//92. Reverse Linked List II  actually using a two pointers to make it a insertion
 	 public ListNode reverseBetween(ListNode head, int m, int n) {
@@ -224,6 +251,60 @@ public class LinkedList {
             fast = fast.next;
         }
         return slow;
+    }
+    
+    //143 reorder list brute force!!!  O(n^2)
+    public void reorderList(ListNode head) {
+        if(head == null||head.next==null) return;
+        ListNode cur = head.next;
+        ListNode precur = head;
+        while(cur!=null&&cur.next!=null){
+            ListNode prelast = cur;
+            ListNode last = cur;
+            while(last.next!=null){
+                prelast = last;
+                last = last.next;
+            }
+            prelast.next = null;
+            precur.next = last;
+            last.next = cur;
+            precur = cur;
+            cur = cur.next;
+        }
+        
+    }
+    // O(n)
+    public void reorderList(ListNode head) {
+        if(head==null||head.next==null) return;
+        
+        //Find the middle of the list
+        ListNode p1=head;
+        ListNode p2=head;
+        while(p2.next!=null&&p2.next.next!=null){ 
+            p1=p1.next;
+            p2=p2.next.next;
+        }
+        
+        //Reverse the half after middle  1->2->3->4->5->6 to 1->2->3->6->5->4
+        ListNode preMiddle=p1;
+        ListNode preCurrent=p1.next;
+        while(preCurrent.next!=null){
+            ListNode current=preCurrent.next;
+            preCurrent.next=current.next;
+            current.next=preMiddle.next;
+            preMiddle.next=current;
+        }
+        
+        //Start reorder one by one  1->2->3->6->5->4 to 1->6->2->5->3->4
+        p1=head;
+        p2=preMiddle.next;
+        while(p1!=preMiddle){
+            preMiddle.next=p2.next;
+            p2.next=p1.next;
+            p1.next=p2;
+            p1=p2.next;
+            p2=preMiddle.next;
+        }
     }
     //147 insertion sorting 
     public ListNode insertionSortList(ListNode head) {

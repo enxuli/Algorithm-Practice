@@ -276,6 +276,126 @@ public class BackTrackingCollection {
 			if (n == 1) return i;
 			return i*factorial(i - 1, n - 1);
 		}
+        //254 254. Factor Combinations
+        public List<List<Integer>> getFactors(int n) {
+            List<List<Integer>> r = new ArrayList<>();
+            List<Integer> t = new ArrayList<>();
+            h(r, t, n, 2);
+            return r;
+        }
+        // we need to understand the factor finding process!!!!!!!!!!
+        void h(List<List<Integer>> r, List<Integer> t,  int n, int s){                
+            for(int i = s; i*i <= n; i++){
+                if(n % i != 0) continue;            
+                t.add(i);
+                t.add(n / i);
+                r.add(new ArrayList<>(t));
+                t.remove(t.size() - 1);
+                h(r, t, n/i, i);
+                t.remove(t.size() - 1);
+            }
+        }
+        //267. Palindrome Permutation II
+        public List<String> generatePalindromes(String s) {
+            HashSet<String> hash = new HashSet<>();
+            HashMap<Character,Integer> map = new HashMap<>();
+            
+            for(int i = 0; i < s.length();i++){
+                map.put(s.charAt(i),map.getOrDefault(s.charAt(i),0)+1);
+            }
+            
+            int count = 0;
+            char single = 0;
+            for(char key : map.keySet()){
+                int x = map.get(key);
+                if(x%2==1){count++;
+                single = key;}
+            }
+            if(count > 1) return new ArrayList<>(hash);
+            
+            StringBuilder sb = new StringBuilder();
+            for(char key : map.keySet()){
+                for(int i = 0; i< map.get(key)/2; i++){
+                    sb.append(key);
+                }
+            }
+            backtracking(hash,sb.length(),sb.toString(),single,"");
+            return new ArrayList<>(hash);
+        }
+        private void backtracking(HashSet<String> hash, int s,String remain,char single, String tmp){
 
+            if(tmp.length()==s) {
+                StringBuilder left = new StringBuilder(tmp);
+                StringBuilder right = new StringBuilder(tmp);
+                if(single!=0)left.append(single).append(right.reverse());
+                else left.append(right.reverse());
+                hash.add(left.toString());
+                return;
+            }
+            
+            for(int i = 0; i < remain.length(); i++){
+                if(i>0&&remain.charAt(i)==remain.charAt(i-1))continue;
+                backtracking(hash,s,remain.substring(0,i)+remain.substring(i+1),single,tmp+ remain.charAt(i));
+            }
+        }
+        //784. Letter Case Permutation
+        public List<String> letterCasePermutation(String S) {
+            List<String> ans = new ArrayList<>();
+            backtracking(ans,S,"",0);
+            return ans;
+        }
+        
+        private void backtracking(List<String> ans, String S, String tmp, int start){
+            //System.out.println(tmp);
+            for(int i = start; i < S.length(); i++){
+                if(S.charAt(i)>='0' && S.charAt(i)<='9') tmp+=S.charAt(i);
+                if((S.charAt(i)<'0' || S.charAt(i)>'9')){
+                    backtracking(ans,S,tmp+Character.toLowerCase(S.charAt(i)),i+1);
+                    backtracking(ans,S,tmp+Character.toUpperCase(S.charAt(i)),i+1);
+                }
+            }
+            if(tmp.length() == S.length()) {ans.add(tmp); return;}
+        }
+        
+        //10. Regular Expression Matching recursion version
+        public boolean isMatch(String target, String pattern) {
+            if(pattern.isEmpty()) return target.isEmpty();
+            
+            boolean firstMatch = !target.isEmpty()&&(target.charAt(0)==pattern.charAt(0)||pattern.charAt(0)=='.');
+            
+            if(pattern.length()>=2 && pattern.charAt(1)=='*'){
+                return isMatch(target,pattern.substring(2))||(firstMatch&&isMatch(target.substring(1),pattern));
+            }else{
+                return firstMatch&&isMatch(target.substring(1),pattern.substring(1));
+            }
+            
+            
+        }
+        
+        //93. Restore IP Addresses
+        
+        public List<String> restoreIpAddresses(String s) {
+            List<String> list = new ArrayList<>();
+            backtrack(list, "", s, 0, 0);
+            return list;
+        }
+
+        private void backtrack(List<String> list, String tempList,String s, int start,int count){
+            //System.out.println(tempList);
+            if(count == 3 &&s.length()-start<=3 && s.length()>start && Integer.valueOf(s.substring(start,s.length()))<=255 ){
+                if(s.length()-start>=2&&s.charAt(start)=='0') return;
+                tempList+= s.substring(start,s.length());
+                list.add(tempList);
+            } else if (count < 3){
+                for(int i = start+1; i <= s.length(); i++){
+                    if(i-start<=3&&Integer.valueOf(s.substring(start,i))<=255){
+                        if(i-start>1 && s.charAt(start)=='0') continue;
+                        backtrack(list, tempList+s.substring(start,i)+".", s, i,count+1);
+                    }
+                }
+            }
+        }
+        
+        
 
 }

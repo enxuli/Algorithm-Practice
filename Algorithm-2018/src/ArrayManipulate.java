@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -106,7 +107,23 @@ public class ArrayManipulate {
         }
         return ans;
     }
-    
+    //350. Intersection of Two Arrays II
+    public int[] intersect(int[] nums1, int[] nums2) {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        List<Integer> list = new ArrayList<>();
+        for(int i= 0; i < nums1.length ; i ++){
+            map.put(nums1[i],map.getOrDefault(nums1[i],0)+1);
+        }
+        for(int j= 0; j < nums2.length ; j ++){
+            if(map.containsKey(nums2[j])&&(map.get(nums2[j])>=1)) {
+                list.add(nums2[j]);
+                map.put(nums2[j],map.get(nums2[j])-1);
+            }
+        }
+        int[] arr = new int[list.size()];
+        for(int k = 0; k < list.size();k++) arr[k] = list.get(k);
+        return arr;
+    }
     
     
     //611. Valid Triangle Number
