@@ -85,6 +85,24 @@ public class TwoPointers {
             nums1[k] = tmp[k];
         }
     }
+    //125. Valid Palindrome char tech to use : Character.isLetterOrDigit!!!!! Character.toLowerCase
+
+    public boolean isPalindrome(String s) {
+        int i = 0, j = s.length() - 1;
+        while(i <= j) {
+            if (!Character.isLetterOrDigit(s.charAt(i))) {
+                i++; continue;
+            }
+            if (!Character.isLetterOrDigit(s.charAt(j))) {
+                j--; continue;
+            }
+            char a = Character.toLowerCase(s.charAt(i));
+            char b = Character.toLowerCase(s.charAt(j));
+            if (a != b) return false;
+            i++; j--;
+        }
+        return true;
+    }
     
     //167. Two Sum II - Input array is sorted
     public int[] twoSum(int[] nums, int target) {
@@ -110,6 +128,41 @@ public class TwoPointers {
         }
     }
     
+    //287. Find the Duplicate Number
+    //exactly like in the linkedlist using fast and slow! to find the start of cycle!!!
+    public int findDuplicate(int[] nums) {
+        int n = nums.length;
+        int slow = n;
+        int fast = n;
+        do{
+            slow = nums[slow-1];
+            fast = nums[nums[fast-1]-1];
+        }while(slow != fast);
+        slow = n;
+        while(slow!=fast){
+            slow = nums[slow-1];
+            fast = nums[fast-1];
+        }
+        return slow;
+    }
+    
+    //345. Reverse Vowels of a String
+    Set<Character> vowel = new HashSet<>(Arrays.asList('a','e','o','i','u','A','E','O','I','U'));
+    public String reverseVowels(String s) {
+        char[] ans = s.toCharArray();
+        int i = 0, j = s.length()-1;
+        while(i < j){
+            if(vowel.contains(ans[i])&&vowel.contains(ans[j])){
+                char tmp = ans[i];
+                ans[i++] = ans[j];
+                ans[j--] = tmp;
+            }else if(vowel.contains(ans[i]))j--;
+            else i++;
+        }
+        return String.valueOf(ans);
+    }
+    
+    
     //349. Intersection of Two Arrays
     // sort to use two pointers! On(logn)
     public int[] intersection(int[] nums1, int[] nums2) {
@@ -127,7 +180,74 @@ public class TwoPointers {
         for(int x : ans) res[idx++] = x;
         return res;
     }
-    //using two set can realize O(n)
+    //or you use two set can realize O(n)
+    
+    
+    
+    //two pointer vs . two set!
+    public int findPairs(int[] nums, int k) {
+ 	
+        if(nums.length < 2){
+            return 0;
+        }
+        Arrays.sort(nums);
+        int i = 0;
+        int j = 0;
+        int result = 0;
+        while(j < nums.length){
+            j = Math.max(i+1,j);
+            while(j < nums.length && nums[j] - nums[i] < k){
+                j++;
+            }
+            if(j < nums.length && nums[j] - nums[i] == k){
+                result++;
+            }
+            i++;
+            while(i< nums.length && nums[i] == nums[i-1]){
+                i++;
+            }
+        }
+        return result;
+    }
+    public int findPairs2(int[] nums, int k) {
+        if(k<0) return 0;
+        HashSet<Integer> set1=new HashSet();
+        HashSet<Integer> set2=new HashSet();
+        for(int i=0;i<nums.length;i++) {
+            if(set1.contains(nums[i]-k)) set2.add(nums[i]-k);
+            if(set1.contains(nums[i]+k)) set2.add(nums[i]);
+            set1.add(nums[i]);
+        }
+        
+        return set2.size();
+        
+    }
+    
+    
+    //680. Valid Palindrome II
+
+    public boolean validPalindrome(String s) {
+        int i = 0, j = s.length()-1;
+        while(i<=j){
+            if(s.charAt(i)!=s.charAt(j)){
+                return validSub(s,i+1,j)||validSub(s,i,j-1);
+            }else{
+                i++;j--;
+            }
+        }
+        return true;
+    }
+    private boolean validSub(String s,int i, int j){
+        while(i<=j){
+            if(s.charAt(i)!=s.charAt(j)){
+                return false;
+            }else{
+                i++;j--;
+            }
+        }
+        return true;
+    }
+    
     
     
 }
