@@ -1,9 +1,21 @@
+import java.util.ArrayList;
+import java.util.List;
 
 public class BitManipulation {
 //https://leetcode.com/problems/sum-of-two-integers/discuss/84278/A-summary:-how-to-use-bit-manipulation-to-solve-problems-easily-and-efficiently
 
 	
-	
+	//89. Gray Code
+	public List<Integer> grayCode(int n) {
+	    List<Integer> rs=new ArrayList<Integer>();
+	    rs.add(0);
+	    for(int i=0;i<n;i++){
+	        int size=rs.size();
+	        for(int k=size-1;k>=0;k--)
+	            rs.add(rs.get(k) | 1<<i);
+	    }
+	    return rs;
+	}
 	
 	//191. Number of 1 Bits
     public int hammingWeight(int n) {
