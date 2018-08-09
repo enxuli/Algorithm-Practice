@@ -141,7 +141,23 @@ public class HashMapCollection {
 	            return true;
 	    }
 	 
-	 
+	 //299. Bulls and Cows
+	 // learn to use accumulation when doing something seen or unseen!!!!
+	    public String getHint(String secret, String guess) {
+	        int[] map = new int[10];
+	        int bull = 0, cow =0;
+	        char[]s = secret.toCharArray();
+	        char[]g = guess.toCharArray();
+	        for(int i = 0 ; i < s.length ; i++) {
+	            if(s[i]==g[i]) bull ++;
+	            else{
+	                if(map[s[i]-'0']++ < 0 ) cow ++;
+	                if(map[g[i]-'0']-- > 0 ) cow ++;
+	            }
+	        }
+
+	        return bull+"A"+cow+"B";
+	    }
 	 
 	 //347. Top K Frequent Elements
 	 	// using map to store the frquency 
@@ -192,6 +208,36 @@ public class HashMapCollection {
 	        }
 	        return ans;
 	    }
+	    
+	    //389. Find the Difference
+	    // do not forget the bit manipulation !!!! only when there is only one difference
+	    //we can simply use XOR!!! to every thing!!!  a^=i!!!!!
+	    // finally there will only be the added difference!
+	    public char findTheDifference(String s, String t) {
+	        int[] map = new int[26];
+	        int ans = 0;
+	        char[] sch = s.toCharArray();
+	        char[] tch = t.toCharArray();
+	        for(int i = 0 ; i < tch.length; i++){
+	            if(i<sch.length) map[sch[i]-'a']++;
+	            map[tch[i]-'a']--;
+	        }
+	        for(int i = 0; i < 26; i++ ){
+	            if(map[i]==-1) ans = i;
+	        }
+	        return (char) ('a'+ans);
+	    }
+	    //
+	    public char findTheDifference2(String s, String t) {
+	    	int n = t.length();
+	    	char c = t.charAt(n - 1);
+	    	for (int i = 0; i < n - 1; ++i) {
+	    		c ^= s.charAt(i);
+	    		c ^= t.charAt(i);
+	    	}
+	    	return c;
+	    }
+	    
 	 //409. Longest Palindrome
 
 	    public int longestPalindrome(String s) {
@@ -241,6 +287,44 @@ public class HashMapCollection {
 	        return map.get(Integer.parseInt(shortUrl.replace("http://tinyurl.com/", "")));
 	    }  
 	 
+	    //560. Subarray Sum Equals K
+	    // brute force n^2 too simple
+	    public int subarraySum(int[] nums, int k) {
+	        int ans = 0;
+	        for(int i = 0 ; i < nums.length; i++){
+	            int sum = 0;
+	            for(int j = i ; j < nums.length; j++){
+	                sum += nums[j];
+	                if (sum == k ) ans++;
+	            }
+	        }
+	        return ans;
+	    }
+	    // use a preSum to sum up the accumulate sum
+	    // sum[i,j] would be sum[0,j]- sum[0,i-1] = k !!!!
+	    // so we just need to see if the sum[0,i-1] is in the map!!!
+	    public int subarraySum2(int[] nums, int k) {
+	        int ans = 0, sum = 0;
+	        HashMap<Integer,Integer> preSum = new HashMap<>();
+	        preSum.put(0,1);
+	        for(int i = 0 ; i < nums.length; i++){
+	            sum+=nums[i];
+	            if(preSum.containsKey(sum - k)){
+	                ans += preSum.get(sum - k);
+	            }
+	            preSum.put(sum, preSum.getOrDefault(sum,0)+1);
+	        }
+	        return ans;
+	    }
+	    //575. Distribute Candies
+
+	    public int distributeCandies(int[] candies) {
+	        HashSet<Integer> set = new HashSet<>();
+	        int unique = 0;
+	        for(int i : candies) if(!set.contains(i)){set.add(i);unique++;}
+	        return unique>=(candies.length/2)? (candies.length/2):unique;
+	    }
+	    
 	//599. Minimum Index Sum of Two Lists
     public String[] findRestaurant(String[] list1, String[] list2) {
         int min = Integer.MAX_VALUE;
