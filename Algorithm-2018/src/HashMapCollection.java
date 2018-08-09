@@ -94,6 +94,35 @@ public class HashMapCollection {
         	else return generateGCD(b,a%b);
         	
         }
+        //187. Repeated DNA Sequences
+        // if there can not be any overlaping use map
+        // if there can be just use map!
+        public List<String> findRepeatedDnaSequences(String s) {
+            HashMap <String, Integer> map = new HashMap<>();
+            HashSet <String> ans = new HashSet<>();
+            for(int i = 0; i <= s.length()-10; i++){
+                String str = s.substring(i,i+10);
+                if(!map.containsKey(str)) map.put(str,i);
+                else ans.add(str);
+            }
+            return new ArrayList<String>(ans);
+        }
+        
+        //205. Isomorphic Strings
+        // this is rather straightforward but you can use map to record both 
+        //alphabet's postion to check if their occur on the same position last time.
+        public boolean isIsomorphic(String s, String t) {
+            char[] src = new char[256];
+            char[] tar = new char[256];
+            char[] sch = s.toCharArray();
+            char[] tch = t.toCharArray();
+            for(int i = 0 ; i < s.length(); i++){
+                if(src[sch[i]]==0) {src[sch[i]]=tch[i];}
+                if(tar[tch[i]]==0) {tar[tch[i]]=sch[i];}
+                if(src[sch[i]]!=tch[i]||tar[tch[i]]!=sch[i]) return false;
+            }
+            return true;
+        }
 
 	//290. Word Pattern！！  using string[] str.split('')!!!
 	 public boolean wordPattern(String pattern, String str) {
@@ -178,6 +207,28 @@ public class HashMapCollection {
 	            else {odd = 1;result+=i-1;}
 	        }
 	        return result+odd;
+	    }
+	    //500. Keyboard Row
+	    char[][] ch = {{'Q','W','E','R','T','Y','U','I','O','P'},{'A','S','D','F','G','H','J','K','L'},{'Z','X','C','V','B','N','M'}};
+	    public String[] findWords(String[] words) {
+	        HashMap<Character,Integer> map = new HashMap<>();
+	        for(int i = 0; i < ch.length;i++){
+	            for(int j = 0; j< ch[i].length;j++){
+	                map.put(ch[i][j],i);
+	            }
+	        }
+	        List<String> ans = new ArrayList<>();
+	        for(String str : words){
+	            char[] tmp = str.toCharArray();
+	            int row = map.get(Character.toUpperCase(tmp[0]));
+	            boolean inSameRow = true;
+	            for(char inner : tmp){
+	                if(map.get(Character.toUpperCase(inner))!=row){inSameRow=false;break;}
+	            }
+	            if(!inSameRow)continue;
+	            ans.add(str);
+	        }
+	        return ans.toArray(new String[ans.size()]);
 	    }
 	    //535. Encode and Decode TinyURL
 	    // need to learn how to use hashCode!!!! Integer!
