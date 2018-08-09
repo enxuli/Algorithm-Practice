@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -111,6 +112,57 @@ public class HashMapCollection {
 	            return true;
 	    }
 	 
+	 
+	 
+	 //347. Top K Frequent Elements
+	 	// using map to store the frquency 
+	 //then using entry to put key into a list array and value to its index!!!
+	 //very smart!
+	 //this is called bucket Sort !!!! first time to hear
+	 //because we already know that the range would exceed the nums.length so we take the advantage!!
+	    public List<Integer> topKFrequent(int[] nums, int k) {
+	        HashMap<Integer, Integer> frequecy = new HashMap<>();
+	        for(int num : nums){
+	            frequecy.put(num, frequecy.getOrDefault(num, 0) + 1);
+	        }
+	        ArrayList<Integer>[] bucket = new ArrayList[nums.length + 1];
+	        for(Map.Entry<Integer, Integer> entry : frequecy.entrySet()){
+	            if(bucket[entry.getValue()] == null){
+	                bucket[entry.getValue()] = new ArrayList<>();
+	            }
+	            bucket[entry.getValue()].add(entry.getKey());
+	        }
+	        List<Integer> topk = new ArrayList<>();
+	        for(int i = nums.length ; i >= 0 && topk.size()< k; i--){
+	            if(bucket[i] != null){
+	                topk.addAll(bucket[i]) ;
+	            }
+	        }
+	        return topk;
+	    }
+	    
+	    // or you can just create a new comparator, but the sort is still NlogN
+	    //
+	    public List<Integer> topKFrequent2(int[] nums, int k) {
+	        HashMap <Integer,Integer> map = new HashMap<>();
+	        List<Integer> ans = new ArrayList<>();
+	        List<HashMap.Entry<Integer,Integer>> list = new ArrayList<>();
+	        for(int x : nums)map.put(x,map.getOrDefault(x,0)+1);
+	        
+	        for(Map.Entry<Integer, Integer> entry : map.entrySet()){
+	             list.add(entry);
+	        }
+
+	        list.sort(new Comparator<Map.Entry<Integer, Integer>>(){
+	               public int compare(Map.Entry<Integer, Integer> a, Map.Entry<Integer, Integer> b) {
+	                    return b.getValue()-a.getValue();} 
+	        }); 
+	        
+	        for(int i = 0; i < k ; i++){
+	              ans.add(list.get(i).getKey());
+	        }
+	        return ans;
+	    }
 	 //409. Longest Palindrome
 
 	    public int longestPalindrome(String s) {
