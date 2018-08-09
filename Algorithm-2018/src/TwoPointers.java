@@ -462,6 +462,23 @@ public class TwoPointers {
         return true;
     }
     
+    // 713. Subarray Product Less Than K
+    // need to why count of the sub array is exactly j-i+1 when the subarray is continugual
+    public int numSubarrayProductLessThanK(int[] nums, int k) {
+        int mul = 1, count = 0, start = 0, end = 0;
+        while(end < nums.length){
+            mul *= nums[end];
+            while(start <= end&&mul>=k){
+                mul /= nums[start++];
+            }
+            count+=end-start+1;
+            end++;
+        }
+        return count;
+        
+    }
+
+    
     //763. Partition Labels
     public List<Integer> partitionLabels(String S) {
         List<Integer> ans = new ArrayList<>();
