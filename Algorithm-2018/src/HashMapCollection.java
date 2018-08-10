@@ -144,6 +144,67 @@ public class HashMapCollection {
             }
             return true;
         }
+        ///244. Shortest Word Distance II
+        // still use two pointers to do it!!
+        class WordDistance {
+            HashMap<String, List<Integer>> map ;
+            //brute force On^2
+            public WordDistance(String[] words) {
+                map = new HashMap<>();
+                for(int i = 0 ; i < words.length; i++){
+                    if(!map.containsKey(words[i]))map.put(words[i], new ArrayList<Integer>(Arrays.asList(i)));
+                    else map.get(words[i]).add(i);
+                }
+                //System.out.println(map);
+            }
+            
+            public int shortest(String word1, String word2) {
+                int min = Integer.MAX_VALUE;
+                List<Integer> a = map.get(word1);
+                List<Integer> b = map.get(word2);
+                for(int i : a){
+                    for(int j : b){
+                        min = Math.min(min,Math.abs(i-j));
+                    }
+                }
+                return min;
+            }
+        }
+        
+        class WordDistance2 {
+            HashMap<String, List<Integer>> map ;
+            //two pointers!!! 
+            //because we can easily see that the list is already sorted!!
+            
+            public WordDistance2(String[] words) {
+                map = new HashMap<>();
+                for(int i = 0 ; i < words.length; i++){
+                    if(!map.containsKey(words[i]))map.put(words[i], new ArrayList<Integer>(Arrays.asList(i)));
+                    else map.get(words[i]).add(i);
+                }
+                //System.out.println(map);
+            }
+            
+            public int shortest(String word1, String word2) {
+                int min = Integer.MAX_VALUE;
+                List<Integer> a = map.get(word1);
+                List<Integer> b = map.get(word2);
+                for(int i = 0, j = 0; i < a.size() && j < b.size(); ) {
+                    int idx1 = a.get(i), idx2 = b.get(j);
+                    if(idx1<idx2){
+                        min = Math.min(min,idx2-idx1);
+                        i++;
+                    }else{
+                        min = Math.min(min,idx1-idx2);
+                        j++;
+                    }
+                    
+                }
+                return min;
+            }
+        }
+
+        
         //274. H-Index
         //use built in sorting !
         public int hIndex(int[] citations) {
@@ -209,13 +270,41 @@ public class HashMapCollection {
 
 	        return bull+"A"+cow+"B";
 	    }
+	    //325. Maximum Size Subarray Sum Equals k
+	    //brute force O n^2
+	    public int maxSubArrayLen(int[] nums, int k) {
+	        int Max = 0;
+	        for(int i = 0 ; i < nums.length; i++){
+	            int sum = 0;
+	            for(int j = i ; j < nums.length; j++){
+	                sum += nums[j];
+	                if (sum == k ) Max=Math.max(Max,j-i+1);
+	            }
+	        }
+	        return Max;
+        }
+	    // using the map to store the preSum!! just like 500+
+	    public int maxSubArrayLen2(int[] nums, int k) {
+            HashMap<Integer,Integer> preSum = new HashMap<>();
+            int max = 0 , sum = 0;
+            preSum.put(0,-1);
+            for(int i = 0 ; i < nums.length; i ++){
+                sum+=nums[i];
+                if(preSum.containsKey(sum - k)){
+                    max = Math.max(max,i-preSum.get(sum - k));
+                }
+                preSum.put(sum,preSum.getOrDefault(sum,i));
+            }
+            return max;
+        }
+	    
 	 
 	 //347. Top K Frequent Elements
 	 	// using map to store the frquency 
 	 //then using entry to put key into a list array and value to its index!!!
 	 //very smart!
 	 //this is called bucket Sort !!!! first time to hear
-	 //because we already know that the range would exceed the nums.length so we take the advantage!!
+	 //because we already know that the range would not exceed the nums.length so we take the advantage!!
 	    public List<Integer> topKFrequent(int[] nums, int k) {
 	        HashMap<Integer, Integer> frequecy = new HashMap<>();
 	        for(int num : nums){
@@ -307,8 +396,55 @@ public class HashMapCollection {
 	    }
 	    
 	    //438. Find All Anagrams in a String
+	    // using a two pointer template!!
+	    // use count to count-- if end is exist in the pattern
+	    // when window length = p.length which include the situation count ==0, move the
+	    // the start forward, when start is in the pattern count ++,
+	    //window size is not fixed but window would only move when the size is p.length 
+	    public List<Integer> findAnagrams(String s, String p) {
+	        List<Integer> list = new ArrayList<>();
 
+	        int[] hash = new int[256]; 
+	        for (char c : p.toCharArray()) {
+	            hash[c]++;
+	        }
+	        int left = 0, right = 0, count = p.length();
+	        while (right < s.length()) {
+	            if (hash[s.charAt(right++)]-- >= 1) count--; 
+	            if (count == 0) list.add(left);
+	            if (right - left == p.length() && hash[s.charAt(left++)]++ >= 0) count++;
+	        }
+	        return list;
+	        }
 	    
+	    
+	    //451. Sort Characters By Frequency
+	    //bucket sorting is sososo useful when it comes to the frequency
+	    //or the range of the some element is fixed!!
+	    public String frequencySort(String s) {
+	        StringBuilder ans = new StringBuilder();
+	        HashMap<Character,Integer> map = new HashMap<>();
+	        char[] str = s.toCharArray();
+	        for(char ch : str) map.put(ch,map.getOrDefault(ch,0)+1);
+	        
+	        List<Character>[] bucket = new List[s.length()+1];
+	        for(HashMap.Entry<Character,Integer> entry : map.entrySet()){
+	            if(bucket[entry.getValue()] == null) bucket[entry.getValue()] = new ArrayList<>(Arrays.asList(entry.getKey()));
+	            else bucket[entry.getValue()].add(entry.getKey());
+	        }
+	        for(int i = s.length(); i >=0; i-- ){
+	            if(bucket[i]!=null) {
+	                    for(char ch : bucket[i]){
+	                        int count = i;
+	                        while(count>0){ans.append(ch);
+	                        count--;
+	                        }
+	                    }
+	                
+	            }
+	        }
+	        return ans.toString();
+	    }
 	    
 	    //500. Keyboard Row
 	    char[][] ch = {{'Q','W','E','R','T','Y','U','I','O','P'},{'A','S','D','F','G','H','J','K','L'},{'Z','X','C','V','B','N','M'}};
