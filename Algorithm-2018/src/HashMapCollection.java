@@ -94,6 +94,27 @@ public class HashMapCollection {
         	else return generateGCD(b,a%b);
         	
         }
+        //170. Two Sum III - Data structure design
+        // use a map to record all the data and it's number
+        // then value - j = i , j and i both in the map
+        // if i == j then number >1, if i != j both contains;
+        private HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+        public void add(int number) {
+            map.put(number, map.containsKey(number) ? map.get(number) + 1 : 1);
+        }
+
+        public boolean find(int value) {
+            for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+                int i = entry.getKey();
+                int j = value - i;
+                if ((i == j && entry.getValue() > 1) || (i != j && map.containsKey(j))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
         //187. Repeated DNA Sequences
         // if there can not be any overlaping use map
         // if there can be just use map!
@@ -122,6 +143,36 @@ public class HashMapCollection {
                 if(src[sch[i]]!=tch[i]||tar[tch[i]]!=sch[i]) return false;
             }
             return true;
+        }
+        //274. H-Index
+        //use built in sorting !
+        public int hIndex(int[] citations) {
+            Arrays.sort(citations);
+            for(int i = 0; i<citations.length; i ++){
+                if(citations[i]>=citations.length-i) return citations.length-i;
+            }
+            return 0;
+        }
+        //use bucket sorting!
+        //some how amazingly O(n)
+        public int hIndex1(int[] citations) {
+            int n = citations.length;
+            int[] buckets = new int[n+1];
+            for(int c : citations) {
+                if(c >= n) {
+                    buckets[n]++;
+                } else {
+                    buckets[c]++;
+                }
+            }
+            int count = 0;
+            for(int i = n; i >= 0; i--) {
+                count += buckets[i];
+                if(count >= i) {
+                    return i;
+                }
+            }
+            return 0;
         }
 
 	//290. Word Pattern！！  using string[] str.split('')!!!
@@ -254,6 +305,11 @@ public class HashMapCollection {
 	        }
 	        return result+odd;
 	    }
+	    
+	    //438. Find All Anagrams in a String
+
+	    
+	    
 	    //500. Keyboard Row
 	    char[][] ch = {{'Q','W','E','R','T','Y','U','I','O','P'},{'A','S','D','F','G','H','J','K','L'},{'Z','X','C','V','B','N','M'}};
 	    public String[] findWords(String[] words) {
@@ -348,6 +404,39 @@ public class HashMapCollection {
         }
         return ans.toArray(new String[ans.size()]);
     }
+    //739. Daily Temperatures
+    // nice implement of how to take the advantage of the range of the data!!!
+    // some sort of bucket sort thinking!!
+    public int[] dailyTemperatures(int[] temp) {
+        //brute force
+        return opt(temp);
+    }
+    public int[] bruteforce(int[] temp){
+       //brute force
+        int[] ans = new int[temp.length];
+        for(int i = 0 ; i < temp.length; i ++){
+            for(int j = i + 1 ; j < temp.length; j++){
+                if(temp[j]>temp[i]){ans[i]=j-i; break;}
+            }
+        }
+        return ans;
+    }
+    public int[] opt(int[] temp){
+        int[] map = new int [101];
+        int[] ans = new int[temp.length];
+        Arrays.fill(ans,Integer.MAX_VALUE);
+        ans[temp.length-1] = 0; 
+        for(int i = temp.length-1; i >=0; i--){
+            map[temp[i]]=i;
+            for(int j = temp[i]+1;j<=100;j++){
+
+                if(map[j]!=0) {ans[i] = Math.min(ans[i],map[j]-i);}
+                
+            }
+            ans[i] = ans[i]==Integer.MAX_VALUE?0:ans[i];
+        }
+        return ans;
+    }
     
     //760. Find Anagram Mappings // using maps and sets!
     public int[] anagramMappings(int[] A, int[] B) {
@@ -392,4 +481,26 @@ public class HashMapCollection {
         return ans;
     }
     
+    
+    //811. Subdomain Visit Count
+
+    public List<String> subdomainVisits(String[] cpdomains) {
+        HashMap<String,Integer> map = new HashMap<>();
+        List<String> ans = new ArrayList<>();
+        for(int i = 0 ; i < cpdomains.length; i ++){
+            String[] str= cpdomains[i].split(" ");
+            int number = Integer.valueOf(str[0]);
+            map.put(str[1],map.getOrDefault(str[1],0)+number);
+            for(int j = 0; j<str[1].length(); j ++){
+                if(str[1].charAt(j)=='.') {
+                    map.put(str[1].substring(j+1,str[1].length()),map.getOrDefault(str[1].substring(j+1,str[1].length()),0)+number);
+                }
+            }
+        }
+        for(HashMap.Entry<String,Integer> entry : map.entrySet()){
+            ans.add(entry.getValue()+" "+entry.getKey());
+        }
+        return ans;
+        
+    }
 }
