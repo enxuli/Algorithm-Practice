@@ -388,6 +388,35 @@ public class TwoPointers {
         }
         return lo;
     }
+    //336. Palindrome Pairs
+    ///super super hard two pointers for the surffix and preffix!!!
+    // use two pointers to divide the string and one part must a counter part in the map
+    // another must be a palindrome itself!!
+    public List<List<Integer>> palindromePairs(String[] words) {
+        List<List<Integer>> pairs = new ArrayList<>();
+        if (words == null) return pairs;
+        HashMap<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < words.length; ++ i) map.put(words[i], i);
+        for (int i = 0; i < words.length; i ++){
+            int left = 0, right = 0;
+            while(left<=right){
+                String tmp = words[i].substring(left,right);
+                Integer j = map.get(new StringBuilder (tmp).reverse().toString());
+                if(j!=null&&i!=j&&isPalindrome(words[i].substring(left==0? right:0, left==0? words[i].length():left)))
+                    pairs.add(Arrays.asList(left==0? new Integer[]{i,j}:new Integer[]{j,i}));
+                if(right<words[i].length()) right++;
+                else left++;
+            }
+        }
+        return pairs;
+    }
+
+    private boolean isPalindrome(String s) {
+        for (int i = 0; i < s.length()/2; ++ i)
+            if (s.charAt(i) != s.charAt(s.length()-1-i))
+                return false;
+        return true;
+    }
     
     //340. Longest Substring with At Most K Distinct Characters
     // this is to easy when you have the trick!!!
