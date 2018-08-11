@@ -16,6 +16,48 @@ public class BitManipulation {
 	    }
 	    return rs;
 	}
+	//137. Single Number II
+	/*
+    This is a case of a finite state machine.
+    States of machine- Total three (number appeared once, number appeared twice, number appeared thrice)
+    Action - Incoming bit of one
+    We will need two bits to keep track of the state. So lets take those states as 00, 01 and 10.
+    The states will transition like 00 -> 01 -> 10 with every incoming bit.
+    Now lets look at the individual bits.
+    First bit - 0 -> 0 -> 1 -> back to 0
+    Second bit - 0 -> 1 -> 0 -> back to 0
+    Note that these bits are transitioning with every state change. Now we need to find a pattern of this change.
+
+    For first bit it is sufficient to say that with every incoming 1 bit, its next state is its XOR with it with an exception-
+    If second bit is set, the first bit becomes zero. So we come up with =>
+    ones = ones ^ A[i];
+    if (twos == 1) then ones = 0
+    It condenses to (ones ^ A[i]) & ~twos;
+
+    For second bit, it is sufficient to say that with every incoming 1 bit, its next state is its XOR with it with an exception-
+    If the one's bit after the change above is set, then it will become zero too. So we come up with =>
+    twos = twos ^ A[i];
+    if (ones* == 1) then twos = 0
+    It condenses to (twos ^ A[i]) & ~ones;
+     */
+    public static int singleNumber5(int[] A) {
+        int ones = 0, twos = 0;
+        for(int i = 0; i < A.length; i++){
+
+            // Accumulate the incoming number in ones provided twos is zero.
+            // Twos will hold the number that has appeared twice.
+            // If two becomes zero, it means the number has appeared the third time- Ones will hold that number now
+            ones = (ones ^ A[i]) & ~twos;
+
+            // Wait for ones bits to be zero before you increment twos.
+            // Ones will be zero when the number is received twice.
+            // So when the number will be received twice, we will store that in twos.
+            twos = (twos ^ A[i]) & ~ones;
+        }
+
+        return ones;
+    }
+	
 	
 	//191. Number of 1 Bits
     public int hammingWeight(int n) {
@@ -31,6 +73,36 @@ public class BitManipulation {
         int bitCount = 0;
         for (int bit = 0 ; bit < 32; bit++ ) bitCount += (n>>bit) & 1;
         return  (bitCount == 1 && n > 0) ;
+    }
+    
+    //260. Single Number III
+
+    public int[] singleNumber(int[] nums) {
+        int diff = 0;
+        for(int num : nums){ diff ^= num; }
+        diff = Integer.highestOneBit(diff);
+        int[] ans = new int[]{0,0};
+        //use the highest different bit between the two single number to divide
+        // the group into two part, each part has only one single number!!!
+        //then use XOR to do single number I
+        for(int num : nums){
+            if ((diff & num) ==0){
+                ans[0]^= num;
+            }else{
+                ans[1]^= num;
+            }
+        }
+        return ans;
+    }
+    //268. Missing Number
+    // to freaking easy just make everything doubled than find the miss which is single!!
+    
+    public int missingNumber(int[] nums) {
+        int xor = 0, i = 0;
+        for(; i < nums.length; i++){
+            xor ^= i^nums[i];
+        }
+        return xor^i;
     }
     
     public boolean isPowerOfTwo2(int num) {
