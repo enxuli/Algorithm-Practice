@@ -1,5 +1,8 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BitManipulation {
 //https://leetcode.com/problems/sum-of-two-integers/discuss/84278/A-summary:-how-to-use-bit-manipulation-to-solve-problems-easily-and-efficiently
@@ -58,6 +61,29 @@ public class BitManipulation {
         return ones;
     }
 	
+    //190. Reverse Bits
+    public int reverseBits(int n) {
+        int ans = 0;
+        //brute force O(n)
+        for(int i = 0; i < 32; i ++){
+            ans |= ((n>>i)&1)<<(31-i);
+        }
+        return ans;
+        
+    }
+    // more genius using O(1)!!
+    //Switching left and right for 5 times which 2^5 = 32.
+    public int reverseBits2(int n) {
+        n = (n >> 16) | (n << 16);
+        n = ((n & 0xff00ff00) >> 8) | ((n & 0x00ff00ff) << 8);
+        n = ((n & 0xf0f0f0f0) >> 4) | ((n & 0x0f0f0f0f) << 4);
+        n = ((n & 0xcccccccc) >> 2) | ((n & 0x33333333) << 2);
+        n = ((n & 0xaaaaaaaa) >> 1) | ((n & 0x55555555) << 1);
+        return n;
+        
+    }
+    
+    
 	
 	//191. Number of 1 Bits
     public int hammingWeight(int n) {
@@ -66,6 +92,35 @@ public class BitManipulation {
             bitCount += (n >> j) & 1;
         }
         return bitCount;
+    }
+    
+    //201. Bitwise AND of Numbers Range
+
+    public int rangeBitwiseAnd(int m, int n) {
+        int and = m;
+        //brute force O(n)
+        for(int i = m ; i!=-2147483648 &&i <= n; i++){
+            and &= i;
+            //System.out.println(and+"i:"+i);
+            if(and ==0) return 0;
+        }
+        return and;
+    }
+    // if two number are different one is odd one is even then 
+    //there must be a 0 in their last AND bit
+    // so the zero would accumulate at the different 
+    // bit is binary so very two^n number between them would create a zero.
+    public int rangeBitwiseAnd2(int m, int n) {
+        if(m == 0){
+            return 0;
+        }
+        int moveFactor = 0;
+        while(m != n){
+            m >>= 1;
+            n >>= 1;
+            moveFactor ++;
+        }
+        return m <<= moveFactor;
     }
     
     //231. Power of Two
@@ -109,6 +164,72 @@ public class BitManipulation {
         int bitCount = 0;
         return  ((num&(num-1)) == 0 && num > 0) ;
     }
+    
+    
+    //318. Maximum Product of Word Lengths
+    public int maxProduct(String[] words) {
+        //O(n^2)
+        //usting bit to recard every words' charactor distribute
+        //then AND those bit to get if two words have comman charactor!!
+        int[] distribute = new int[words.length];
+        for(int i = 0 ; i < words.length; i++){
+            for(char ch : words[i].toCharArray()){
+                distribute[i]|=1<<(ch-'a');
+            }
+        }
+        int maxLen = 0;
+        for(int i = 0; i < words.length-1; i ++){
+            for(int j = i+1; j < words.length; j++)
+                if((distribute[i]&distribute[j])==0){
+                    maxLen=Math.max(maxLen,words[i].length()*words[j].length());
+                }
+        }
+        return maxLen;
+    }
+    
+    //320. Generalized Abbreviation
+    public List<String> generateAbbreviations(String word) {
+        // intuitive backtracking
+        List<String> ans = new ArrayList<>();
+        backtracking(ans,word,"",0,0);
+        return ans;
+    }
+    private void backtracking(List<String> ans, String word, String tmp, int index, int count){
+        if(index == word.length()){
+            if(count>0)tmp+=count;
+            ans.add(tmp);
+        }else{
+            backtracking(ans,word,tmp,index+1,count+1);
+            backtracking(ans,word, tmp + (count>0? count:"")+ word.charAt(index),index+1,0);
+        }
+    }
+    // bit manipulate
+    public List<String> generateAbbreviations2(String word) {
+        List<String> ret = new ArrayList<>();
+        int n = word.length();
+        // the position of the number is actually the bit position of the mask
+        // moving the mask from 0 to 2^n, which mean the bit could cover all in the 2^n
+        // every time we move mask, check the succeed mask bit and count them
+        // every time we meet 0, append count (then clear count) and append char.
+        for(int mask = 0;mask < (1 << n);mask++) {
+            int count = 0;
+            StringBuffer sb = new StringBuffer();
+            for(int i = 0;i <= n;i++) {
+                if(((1 << i) & mask) > 0) {
+                    count++;
+                } else {
+                    if(count != 0) {
+                        sb.append(count);
+                        count = 0;
+                    }
+                    if(i < n) sb.append(word.charAt(i));
+                }
+            }
+            ret.add(sb.toString());
+        }
+        return ret;
+    }
+    
     
 	//342 Power of Four
     public boolean isPowerOfFour1(int n) {
@@ -178,6 +299,32 @@ public class BitManipulation {
             }
             return sb.reverse().toString();
         }
+        
+        //421. Maximum XOR of Two Numbers in an Array
+        //firstly every time you come acrossed a bit problem
+        //you have take the advantage of the 32 bits length
+        //to make it a less time complexity
+        //this one gradually finding the max one bit by one bit
+        // but you have to use a mask to make sure that 
+        // the max wont miss any "sub max" which it contains
+        public int findMaximumXOR(int[] nums) {
+            int ans = 0, mask = 0;
+            for (int x = 31; x >= 0; x--) {
+                mask |= (1 << x);
+                HashSet set = new HashSet();
+                int temp = ans | (1 << x);
+                for (int i = 0; i < nums.length; i++) {
+                    int num = nums[i] & mask;
+                    if (set.contains(temp ^ num)) {
+                        ans = temp;
+                        break;
+                    }
+                    set.add(num);
+                }
+            }
+            
+            return ans;
+        }
     
 // 477 brute force!! n^2
 	
@@ -194,7 +341,9 @@ public class BitManipulation {
         return Integer.bitCount(x ^ y);
     }
     
-    //477 using bit set
+    //477. Total Hamming Distance
+ 
+    //using bit set
     public int totalHammingDistance2(int[] nums) {
         int result = 0;
         int total = nums.length;
@@ -206,6 +355,21 @@ public class BitManipulation {
             result += bitCount * (total - bitCount);
         }
         return result;
+    }
+    
+    //762. Prime Number of Set Bits in Binary Representation
+
+    public int countPrimeSetBits(int L, int R) {
+        Set<Integer> primes = new HashSet<>(Arrays.asList(2, 3, 5, 7, 11, 13, 17, 19 , 23, 29));
+        int ans = 0;
+        for(int i = L; i <= R; i++){
+            int bit = 0;
+            for(int n=i; n>0; n>>=1){
+                bit+=n & 1;
+            }
+            if(primes.contains(bit))ans++;
+        }
+        return ans;
     }
 	
 }

@@ -108,6 +108,7 @@ public class ArrayManipulate {
     
     
     
+    
     //259 3Sum smaller sum!!! always transfor to the two pointer or hashtable search!!(O(n))
     
     public int threeSumSmaller(int[] nums, int target) {
@@ -145,6 +146,45 @@ public class ArrayManipulate {
         return arr;
     }
     
+    //421. Maximum XOR of Two Numbers in an Array
+    public int findMaximumXOR(int[] nums) {
+        //brute force O(n^2)
+        int max = 0;
+        for(int i = 0; i < nums.length-1; i ++){
+            for(int j = i+1; j< nums.length; j ++ ){
+                max = Math.max(max,nums[i]^nums[j]);
+            }
+        }
+        return max;
+    }
+    
+    //448. Find All Numbers Disappeared in an Array
+    //just like the 41, we have to put all the integer to its postion.
+    public List<Integer> findDisappearedNumbers(int[] nums) {
+        List<Integer> ans = new ArrayList<>();
+        int index = 0;
+        while(index <nums.length){
+            if(nums[nums[index]-1]!=nums[index]) swap(nums, index, nums[index]-1);
+            else index++;
+        }
+        //System.out.println(Arrays.toString(nums));
+        for(int i = 0 ; i < nums.length; i++){
+            if(nums[i]!=i+1) ans.add(i+1);
+        }
+        return ans;
+        
+    }
+    //476. Number Complement
+
+    public int findComplement(int num) {
+        int count =0, i= num, ans = 0;
+        while(i>0){
+            if(((num>>count)&1)!=1) ans+=Math.pow(2,count);
+            count++;
+            i/=2;
+        }
+        return ans;
+    }
     
     //611. Valid Triangle Number
     // using a three pointers method to do compare search!!!
