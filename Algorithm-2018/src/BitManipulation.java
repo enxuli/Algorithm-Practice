@@ -8,6 +8,27 @@ public class BitManipulation {
 //https://leetcode.com/problems/sum-of-two-integers/discuss/84278/A-summary:-how-to-use-bit-manipulation-to-solve-problems-easily-and-efficiently
 
 	
+	//29. Divide Two Integers
+
+    public int divide(int dividend, int divisor) {
+        if ( divisor==0 || (dividend == Integer.MIN_VALUE && divisor == -1))
+            return Integer.MAX_VALUE;
+        long dvd = Math.abs((long)dividend);
+        long dvs = Math.abs((long)divisor);
+        System.out.println(dvd);
+        int ans = 0;
+        while (dvd >=dvs) { 
+            long temp = dvs, multiple = 1;
+            while (dvd >= (temp << 1)) {
+                temp <<= 1;
+                multiple <<= 1;
+            }
+            dvd -= temp;
+            ans += multiple;
+        }
+        return ((dividend < 0) ^ (divisor < 0)) ? -ans : ans; 
+    }
+	
 	//89. Gray Code
 	public List<Integer> grayCode(int n) {
 	    List<Integer> rs=new ArrayList<Integer>();
