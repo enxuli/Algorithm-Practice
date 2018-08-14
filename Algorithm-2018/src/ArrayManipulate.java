@@ -128,6 +128,17 @@ public class ArrayManipulate {
         }
         return ans;
     }
+    //334. Increasing Triplet Subsequence
+    public boolean increasingTriplet(int[] nums) {
+        int low = Integer.MAX_VALUE, mid = Integer.MAX_VALUE;
+        for(int x : nums){
+            if(x<=low){low = x;}
+            else if(x<=mid){mid = x;}
+            else return true;
+        }
+        return false;
+    }
+    
     //350. Intersection of Two Arrays II
     public int[] intersect(int[] nums1, int[] nums2) {
         HashMap<Integer,Integer> map = new HashMap<>();

@@ -1,6 +1,60 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TreeSet;
 
+
 public class BinarySearch {
+	
+	//34. Find First and Last Position of Element in Sorted Array
+    public int[] searchRange(int[] nums, int target) {
+        // brute force O(n)
+        if(nums == null || nums.length ==0) return new int[] {-1,-1};
+        int low = 0, high = nums.length-1;
+        while(low < high ){
+            int mid = (low + high) /2 ;
+            if(nums[mid]>target) high = mid - 1;
+            else if(nums[mid]<target) low = mid + 1;
+            else {low = mid; break;}
+            
+        }
+        if(nums[low]!=target) return new int[] {-1,-1};
+        else{
+            int i= low, j = low;
+            while((i>=0&&nums[i]==target)||(j<=nums.length-1&& nums[j]== target)){
+                if(i>=0&&nums[i]==target){i--;}
+                if(j<=nums.length-1&&nums[j]== target){j++;}
+            }
+            return new int[] {i+1,j-1};
+        }
+    }
+    // learn how to bias in the binary search using high = mid -1, or low = mid +1!
+    // two binary search could done this
+    //firstly using low = mid +1 when nums[mid]<target,
+    // when nums[mid]==target, low will not move, and high would move forward low untill they are eqaul.
+    public int[] searchRange2(int[] nums, int target) {
+        // brute force O(n)
+        int[] ans = new int[] {-1,-1};
+        if(nums == null || nums.length ==0) return ans;
+        
+        int low = 0, high = nums.length-1;
+        while(low < high ){
+            int mid = (low + high) /2 ;
+            if(nums[mid]<target) low = mid + 1; //always moving left
+            else  high = mid; 
+        }
+        if(nums[low]!=target) return ans;
+        else ans[0] = low;
+        high = nums.length-1;
+        while(low < high){
+            int mid = (low + high) / 2 + 1;//bias to right move the comparasion on!!!
+            if(nums[mid]>target) high = mid -1;//always moving right
+            else low = mid;
+        }
+        ans[1]=low;
+        return ans;
+        
+    }
 	
 	//35. Search Insert Position
     public int searchInsert(int[] nums, int target) {
@@ -46,6 +100,69 @@ public class BinarySearch {
         if(high * high == x) return (int) high;
         return (int)low;
     }
+    // 74. Search a 2D Matrix
+    //log(n*m)
+    public boolean searchMatrix1(int[][] matrix, int target) {
+    	if(matrix.length==0||matrix[0].length==0) return false;
+        //treat the matrix as a array.
+    	int row_num = matrix.length;
+    	int col_num = matrix[0].length;
+    	
+    	int begin = 0, end = row_num * col_num - 1;
+    	
+    	while(begin <= end){
+    		int mid = (begin + end) / 2;
+    		int mid_value = matrix[mid/col_num][mid%col_num];
+    		
+    		if( mid_value == target){
+    			return true;
+    		
+    		}else if(mid_value < target){
+    			//Should move a bit further, otherwise dead loop.
+    			begin = mid+1;
+    		}else{
+    			end = mid-1;
+    		}
+    	}
+    	
+    	return false;
+    }
+    // m + log(n) worse than log(m) + log(n)
+    public boolean searchMatrix3(int[][] matrix, int target) {
+        int row = 0;
+        while(row < matrix.length){
+            //System.out.println(row);
+            int low = 0, high = matrix[row].length -1 ;
+            if(high>=0 && matrix[row][low]<=target && matrix[row][high]>=target){
+                while(low <= high){
+                    int mid = (low + high) / 2;
+                    if(matrix[row][mid]>target) high = mid - 1;
+                    else if (matrix[row][mid]<target) low = mid + 1;
+                    else return true;
+                }
+                break;
+            }else row++;
+        }
+        return false;
+    }
+    // space reduction here, m + n! not better than 
+    public boolean searchMatrix4(int[][] matrix, int target) {
+        if(matrix == null || matrix.length == 0) return false;
+        int i = 0, j = matrix[0].length - 1;
+            while (i < matrix.length && j >= 0) {
+                    if (matrix[i][j] == target) {
+                        return true;
+                    } else if (matrix[i][j] > target) {
+                        j--;
+                    } else {
+                        i++;
+                    }
+                }
+            
+            return false;
+    }
+    
+    
     //153. Find Minimum in Rotated Sorted Array
 
     public int findMin(int[] nums) {
@@ -101,7 +218,32 @@ public class BinarySearch {
 		} 
 		return max;
 	}
-	
+	//222. Count Complete Tree Nodes
+
+    public int countNodes(DFS.TreeNode root) {
+        //brute force O(n) dfs but TLE
+        if(root == null) return 0;
+        int left = countNodes(root.left);
+        int right = countNodes(root.right);
+        return 1 + left + right;
+    }
+    
+    //Binary Search 
+    public int countNodes2(DFS.TreeNode root) {
+        //O(logn*logn) dfs
+        //go to all the way down to the botton to see if the subtree is full (left == right == null)
+        // if it is, then return 2^n-1 
+        if(root == null) return 0;
+        int height = 0;
+        DFS.TreeNode left = root, right = root;
+        while(right!= null){
+            left = left.left;
+            right = right.right;
+            height ++;
+        }
+        if(left == null) return (1<<height)-1;
+        return 1 + countNodes(root.left) + countNodes(root.right);
+    }
 	//240. Search a 2D Matrix II
 	// optimized binary search worst case log(log(n!)
     public boolean searchMatrix(int[][] matrix, int target) {
@@ -140,6 +282,72 @@ public class BinarySearch {
         }
         return false;
     }
+    
+    
+    //287. Find the Duplicate Number
+    	// but this is nlog n. not as tricky as the LL two pointers approach!
+    // his is a very great example of using the [range] as the search space!!!
+    /*you perceive the indices as the values.
+	Then count the number of values lesser than the mid
+	If the if the count is lesser than mid, we assume the duplicate number should be on the higher side of the number scale.
+	so we make low = mid + 1
+	else we assume the duplicate number should be on the lower end of the number scale.
+	so we make high = mid - 1
+
+	We continue until low <=hight no longer holds true.*/
+    public int findDuplicate(int[] nums) {
+    	int low = 1, high = nums.length - 1;
+        while (low <= high) {
+            int mid = (int) (low + (high - low) * 0.5);
+            int cnt = 0;
+            for (int a : nums) {
+                if (a <= mid) ++cnt;
+            }
+            if (cnt <= mid) low = mid + 1;
+            else high = mid - 1;
+        }
+        return low;
+    }
+    
+    //300. Longest Increasing Subsequence
+    // O(n^2)
+    public int lengthOfLIS(int[] nums) {
+        //dp approach
+        int max = 0;
+        int[] dp = new int[nums.length];
+        Arrays.fill(dp,1);
+        for(int i = nums.length-1; i>=0; i--){
+            int tmp = dp[i];
+            for(int j = i+1; j< nums.length; j++){
+                if(nums[j]>nums[i]) dp[i]=Math.max(tmp+dp[j],dp[i]);
+            }
+            max = Math.max(max,dp[i]);
+        }
+        return max;
+    }
+    // DP + binarySearch nlogn
+    public int lengthOfLIS2(int[] nums) {
+        //dp approach + binary search the dp! for update the last value of that len
+        //mean idea is to store all the last value in the dp of all the length
+        //so that you can find current number should append to which length!!! then update that length+1 or length++
+        int[] dp = new int[nums.length];
+        int[] data = new int[nums.length];
+        int len = 0;
+        Arrays.fill(data,-1);
+        for(int i = 0; i < nums.length; i ++){
+            int low = 0, high = len;
+            while(low < high){
+                int mid = (low + high) / 2;
+                if(dp[mid] < nums[i]) low = mid + 1;
+                else high = mid;
+            }
+            if(low == len) {
+                len++;
+            }
+            dp[low]=nums[i];
+        }
+        return len;
+    }
 	
 	
 	//363  combine all the selected col to 1D array and then use the binary search in 1D array!!. 
@@ -166,8 +374,91 @@ public class BinarySearch {
         }
         return max;
     }
+    
+    //378. Kth Smallest Element in a Sorted Matrix
 
-	
+    public int kthSmallest(int[][] matrix, int k) {
+    	// brute force O(m*n)
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int[] arr = new int[m*n];
+        for(int i = 0 ; i < m; i ++){
+            for(int j = 0; j < n; j++){
+                arr[i*m+j]=matrix[i][j];
+            }
+        }
+        Arrays.sort(arr);
+        //System.out.println(Arrays.toString(arr));
+        return arr[k-1];
+    }
+    // guess number
+    public int guessNumber1(int n) {
+        int low = 1, high = n;
+        while(low < high){
+            int mid = low + (high - low) / 2; 
+            // OOOOOHHHHHH SHIT THERE CAN BE OVERFLOW WHEN YOU DIRECTLY USE (i + j)/2
+            // you have to remember this, always be careful about the overflow!!!
+            // if the range is not clearly mentioned
+            if (guess(mid) == 0) {
+                return mid;
+            }else if(guess(mid) == 1) {
+                low = mid + 1;
+            }else {
+                high = mid;
+            }
+        }
+        return low;
+    }
+    //658. Find K Closest Elements
+
+    public List<Integer> findClosestElements(int[] nums, int k, int x) {
+        List<Integer> ans = new ArrayList<>();
+        int low = 0, high = nums.length - k -1 ;
+        while(low <= high){
+            int mid = (low + high) / 2; 
+            if(Math.abs(nums[mid]-x) > Math.abs(nums[mid+k]-x)) low = mid + 1;
+            else high = mid - 1;
+        }
+        for(int i = low; i < low+k; i++){
+            ans.add(nums[i]);
+        }
+        return ans;
+    }
+    
+    //852. Peak Index in a Mountain Array
+    public int peakIndexInMountainArray(int[] A) {
+        //brute force n
+        for(int i = 0; i< A.length-1; i++){
+            if(A[i+1]<A[i]) return i;
+        }
+        return -1;
+    }
+    //binary search log(n);
+    public int peakIndexInMountainArray2(int[] A) {
+        //binary search log(n)
+        int low = 0 , high = A.length -1 ;
+        while(low < high){
+            int mid = (low + high) / 2;
+            if(A[mid] > A[mid + 1]) high = mid;
+            else low = mid+1;
+        }
+        return low;
+    }
+    //maybe this is better to understand!
+    public int peakIndexInMountainArray3(int[] nums) {
+        int left = 0, right = nums.length -1;
+        
+        while(left< right){
+            int mid = (right+left) / 2;
+            if(nums[mid] < nums[mid+1]){
+                left = mid + 1;
+            }else{
+                right = mid;
+            }
+        }
+        return right;
+        
+    }
 
 
 }
