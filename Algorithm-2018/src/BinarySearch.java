@@ -349,6 +349,25 @@ public class BinarySearch {
         return len;
     }
 	
+    //354. Russian Doll Envelopes
+    // new sorting method for array when sort the 2D array for only one D inside of them!!
+    public int maxEnvelopes(int[][] nums) {
+        //Arrays.sort(nums, (a,b) -> a[0]-b[0]);
+        //there was a problem here because a[0] can be equal to b[0]
+        //but a[1] would larger than b[1] which makes it a ascending sequance and we dont want it
+        //if a[0]==b[0], we need to switching a[1] b[1] by descending.
+        Arrays.sort(nums, (a,b) -> Integer.compare(a[0]==b[0]?b[1]:a[0], a[0]==b[0]?a[1]:b[0]));
+        int m = nums.length;
+        int[] dp = new int[m];
+        int len = 0;
+        for(int i = 0 ; i < m; i++){
+            int insert = Arrays.binarySearch(dp,0,len,nums[i][1]);
+            if(insert < 0) insert = - (insert+1);
+            if(insert == len) len++;
+            dp[insert] = nums[i][1];
+        }
+        return len;
+    }
 	
 	//363  combine all the selected col to 1D array and then use the binary search in 1D array!!. 
 	//363. Max Sum of Rectangle No Larger Than K
@@ -373,6 +392,19 @@ public class BinarySearch {
             }
         }
         return max;
+    }
+    
+    //367. Valid Perfect Square
+    //just always be aware of overflow of the int!!
+    public boolean isPerfectSquare(int num) {
+        int low = 0, high = num;
+        while(low < high){
+            int mid = low + (high - low) / 2;
+            if(mid!=0&&mid*mid/mid!=mid) high = mid;
+            else if(mid*mid < num) low = mid + 1;
+            else high = mid;
+        }
+        return low*low==num;
     }
     
     //378. Kth Smallest Element in a Sorted Matrix
@@ -409,6 +441,27 @@ public class BinarySearch {
         }
         return low;
     }
+    
+    //475. Heaters
+    	//bruteforce should be n^2
+    public int findRadius(int[] houses, int[] heaters) {
+        //the idea should be find all the spot around heaters that should insert house!!!
+        //I was thinking the totally opposite way!
+        //ALWAYS REMEMBER WHEN DOING BINARY SEARCH YOU HAVE HAVE HAVE TO SORT!!!
+        Arrays.sort(heaters);
+        int max = 0, prepos = 0;
+        for(int i = 0 ; i < houses.length; i ++){
+            int pos = Arrays.binarySearch(heaters,houses[i]);
+            if(pos < 0) pos= - (pos + 1);
+            // I was confused at here!!
+            int distance1 = pos > 0? houses[i] - heaters[pos-1] : Integer.MAX_VALUE;//if pos == 0, use heaters[pos] - houses[i];
+            int distance2 = pos< heaters.length? heaters[pos] - houses[i] : Integer.MAX_VALUE;
+            //if pos == heaters.length, use houses[i] - heaters[pos-1];
+            max = Math.max(max,Math.min(distance1,distance2));
+        }
+        return max;
+    }
+    
     //658. Find K Closest Elements
 
     public List<Integer> findClosestElements(int[] nums, int k, int x) {
