@@ -282,6 +282,23 @@ public class BinarySearch {
         }
         return false;
     }
+    //275. H-Index II
+    // why this works?
+    // because when citations.length - mid == citations[mid], we find the answer
+    // although high would skip to mid -1, low would finally == high+1!!!
+    // another thing is that you have to learn that when low <= high, you need high = mid -1!
+    // also in thie quiz, this kind of operation avoid the zero problem
+    // becuase if it has answer it would bias to left part, if it does not have answer it would bias to the right part
+    // which is a amazing find!
+    public int hIndex(int[] citations) {
+        int low = 0, high = citations.length-1;
+        while(low <= high){
+            int mid = (low + high) / 2 ;
+            if(citations.length - mid > citations[mid]) low = mid + 1;
+            else high = mid -1;
+        }
+        return citations.length-low;
+    }
     
     
     //287. Find the Duplicate Number
@@ -440,6 +457,18 @@ public class BinarySearch {
             }
         }
         return low;
+    }
+    //441. Arranging Coins
+    //gotta be careful about the over flow!!!!!
+    // always need to carefully think about the low <= high!!
+    public int arrangeCoins(int n) {
+        int low = 1 , high = n;
+        while(low <= high){
+            long mid = low + (high - low) / 2;
+            if(n / ((mid+1)*mid/2) >=1) low = (int) mid + 1;
+            else high = (int)mid-1;
+        }
+        return low-1;
     }
     
     //475. Heaters
