@@ -79,4 +79,36 @@ public class Memoization {
         map.put(s, res);
         return res;
     }
+    
+    //312. Burst Balloons
+    public int maxCoins(int[] nums) {
+        int[] nums2 = new int[nums.length + 2];
+        nums2[0] = 1;
+        int i = 1;
+        for (int n: nums) {
+            if (n > 0) nums2[i++] = n;
+        }
+        nums2[i] = 1;
+        int[][] memo = new int[i + 1][i + 1];
+        
+        return maxCoins(nums2, 0, i, memo);
+    }
+    
+    private int maxCoins(int[] nums, int left, int right, int[][] memo) {
+        if (left == right - 1) return 0;
+        if (memo[left][right] > 0) return memo[left][right];
+        
+        int max = 0;
+        for (int i = left + 1; i < right; i++) {
+            int resultForI = 
+                nums[left] * nums[i] * nums[right] +
+                maxCoins(nums, left, i, memo) +
+                maxCoins(nums, i, right, memo);
+            max = Math.max(max, resultForI);
+        }
+        memo[left][right] = max;
+        return max;
+    }
+
+    
 }

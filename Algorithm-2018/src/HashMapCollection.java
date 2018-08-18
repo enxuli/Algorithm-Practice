@@ -53,6 +53,25 @@ public class HashMapCollection {
 	        return map.values().stream()
 	            .collect(java.util.stream.Collectors.toList());
 	    }
+	    //128. Longest Consecutive Sequence
+
+	    public int longestConsecutive(int[] nums) {
+	        //we can simply use a hashset to store all the number and pick the one we need for very single one !!
+	        //but we only start with the smallest one we can find so that the rtc can be O(n)
+	        int maxLen = 0;
+	        HashSet<Integer> set = new HashSet<>();
+	        for(int num: nums) set.add(num);
+	        for(int num: nums){
+	            int next = num+1, localLen = 1;
+	            if(!set.contains(num-1)){
+	                while(set.contains(next++)){
+	                    localLen++;
+	                }
+	                maxLen = Math.max(maxLen,localLen);
+	            }
+	        }
+	        return maxLen;
+	    }
 	//149. Max Points on a Line
 
     public int maxPoints(Point[] points) {
@@ -236,7 +255,7 @@ public class HashMapCollection {
             return 0;
         }
 
-	//290. Word Pattern！！  using string[] str.split('')!!!
+	//290. Word Patternï¼�ï¼�  using string[] str.split('')!!!
 	 public boolean wordPattern(String pattern, String str) {
 	        String[] strs = str.split(" ");
 	        if (strs.length != pattern.length()) return false;
