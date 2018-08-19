@@ -93,6 +93,26 @@ public class DP {
         }
         return dp[m][n];
     }
+    
+    //91. Decode Ways
+
+    public int numDecodings(String s) {
+        //intuition: the answer only require the number of the decode method
+        //we need to find all the partitions of the String
+        // assume dp[i] is the total number partitions when length is i;
+        // then dp[i] is previous number + substring(i-1,i)<= 26 ? 1:0;
+        // but here is the tricky part , we can not distinguish if it's not valid 0 from left to right
+        // so we have to do it from right to left
+        int n = s.length();
+        int[] dp = new int[s.length()+1];
+        dp[n] = 1;
+        dp[n-1] = s.charAt(n-1)=='0'?0:1;
+        for(int i = n-2; i >=0; i--){
+            if(s.charAt(i)=='0')continue;
+            dp[i] = (Integer.valueOf(s.substring(i,i+2))<=26)? dp[i+1]+dp[i+2] : dp[i+1];
+        }
+        return dp[0];   
+    }
 	
     //96. Unique Binary Search Trees
     public int numTrees(int n) {

@@ -464,6 +464,21 @@ public class TwoPointers {
     }
     
     
+    //674. Longest Continuous Increasing Subsequence
+    public int findLengthOfLCIS(int[] nums) {
+        //two pointers 
+        if(nums.length == 0 || nums == null) return 0;
+        int i = 0, len = 1, max = 1;
+        while(i < nums.length-1){
+            if(nums[i]<nums[i+1])len++;
+            if(i+1==nums.length-1||nums[i]>=nums[i+1]){
+                max = Math.max(len,max);
+                len = 1;
+            }
+            i++;
+        }
+        return max;
+    }
     
     
     
@@ -507,6 +522,35 @@ public class TwoPointers {
         
     }
 
+    //727. Minimum Window Subsequence
+    public String minWindow2(String S, String T) {
+        // two pointer solution here is so sick!!!
+        //very time target len reach the end find the min start of the target by reducing s!
+        // use len to record the min length
+        // then return the substring from start to len;
+        char[] str = S.toCharArray();
+        char[] tar = T.toCharArray();
+        int s = 0, t = 0, start = 0, minLen = Integer.MAX_VALUE, m = S.length(), n = T.length();
+        while(s < m){
+            if(str[s] == tar[t]){
+                if(++t == n){
+                    int end = s + 1;
+                    while(--t >= 0){
+                        while(str[s--]!=tar[t]);
+                    }
+                    ++t;
+                    ++s;
+                    if(end - s < minLen){
+                        start = s;
+                        minLen = end - s;
+                    }
+                }
+            }
+            ++s;
+        }
+        return minLen == Integer.MAX_VALUE? "":S.substring(start,start + minLen);
+        
+    }
     
     //763. Partition Labels
     public List<Integer> partitionLabels(String S) {
