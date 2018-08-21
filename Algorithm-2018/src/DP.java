@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DP {
@@ -21,6 +22,41 @@ public class DP {
         return ans;
         
     }
+    //10. Regular Expression Matching
+    public boolean isMatch(String t, String p) {
+        // intuition: we have dp[i][j], i for length i in s, j for length j in p, dp to store the if they match with i and j length
+        // 1 if s[i] == p[j] dp[i][j] = dp[i-1][j-1];
+        // 2 if p[j] == '.' we need to pass the j so that dp[i][j] = dp[i-1][j-1]
+        // 3 if p[*] == '*' we have to see the previous char in p and s
+        // if p[j-1] != s[i]  dp[i][j] = dp[i][j-2]
+        // if p[j-1] == s[i] || p[j-1] == '.' dp[i][j] = dp[i][j-2](for zero)||dp[i][j-1](for one)||dp[i-1][j](for multiple)
+        // because there can be a lot of previous i that can match j if it's multiple, so we make it the last i.
+        char[] string = t.toCharArray();
+        char[] pattern = p.toCharArray();
+        int m = string.length;
+        int n = pattern.length;
+        boolean[][] dp = new boolean[m+1][n+1];
+        
+        //here comes the most tricky part!!!! because there can be a* become empty so that we need to make sure all the 
+        //boundery with * to be same with the previous empty, as they can be start with true or stick to the non empty boundary
+        dp[0][0] = true;
+        for(int j = 1 ; j <= n; j++) if(pattern[j-1] =='*') dp[0][j] = dp[0][j-2];
+        
+        for(int i = 1; i <= m; i++){
+            for(int j = 1; j <= n; j++){
+                if(string[i-1] == pattern[j-1]) dp[i][j] = dp[i-1][j-1];
+                else if(pattern[j-1] == '.') dp[i][j] = dp[i-1][j-1];
+                else if(pattern[j-1] == '*'){
+                    if(j == 1) continue;
+                    if(pattern[j-2] != string[i-1]&&pattern[j-2] != '.') dp[i][j] = dp[i][j-2];
+                    else{
+                        dp[i][j] = dp[i][j-2]||dp[i][j-1]||dp[i-1][j];
+                    }
+                }
+            }
+        }
+        return dp[m][n];
+        }
 	
 	//32. Longest Valid Parentheses
     public int longestValidParentheses(String s) {
@@ -45,6 +81,33 @@ public class DP {
         return max;
     }
 	
+    
+    //44. Wildcard Matching
+
+    public boolean isMatch2(String s, String p) {
+        //simplified 10 match pattern
+        // say we dp[i][j] to see if length i for s matches length j for p
+        // 1. if s[i-1] == p[j-1] dp[i][j] = dp[i-1][j-1];
+        // 2. if p[j-1] == '*' dp[i][j] = dp[i][j-1] (for zero) || dp[i-1][j-1](for one) || dp[i-1][j](for multiple);
+        // 3. if p[j-1] == '?' dp[i][j] = dp[i-1][j-1];
+        
+        char[] string = s.toCharArray();
+        char[] pattern = p.toCharArray();
+        int n = string.length;
+        int m = pattern.length;
+        boolean[][] dp = new boolean[n+1][m+1];
+        dp[0][0]= true;
+        // dont forget the trikcy part ! the first element witch is * can be empty!!!
+        
+        for(int j = 1; j<= m; j ++) if(pattern[j-1] == '*') dp[0][j] = dp[0][j-1];
+        for(int i = 1; i <= n ; i ++){
+            for(int j = 1 ; j <= m ; j ++){
+                if(string[i-1] == pattern[j-1] || pattern[j-1] == '?') dp[i][j] = dp[i-1][j-1];
+                else if(pattern[j-1] =='*') dp[i][j] = dp[i][j-1] || dp[i-1][j-1] || dp[i-1][j];
+            }
+        }
+        return dp[n][m];
+    }
 	//53. Maximum Subarray
 	
 	
@@ -132,6 +195,33 @@ public class DP {
         }
         return dp[n];
     }
+    //97. Interleaving String
+    public boolean isInterleave(String s1, String s2, String s3) {
+        // this is quite similar to the minimum operators problem!!!!!
+        // when we come across two strings! we always use 2D array of DP!
+        // one demension for length of s1 one demension for length of s2
+        // say dp[i][j] is for length i in s1 and length j in s2
+        // the interleaving pattern could be unidentical so there can be 
+        
+        char[] str1 = s1.toCharArray();
+        char[] str2 = s2.toCharArray();
+        char[] src = s3.toCharArray();
+        int m = str1.length;
+        int n = str2.length;
+        int srcLength = src.length;
+        if(srcLength != m+n) return false;
+        boolean[][] dp = new boolean[m+1][n+1];
+        for(int i = 0; i <= m; i++){
+            for(int j = 0; j <=n; j++){
+                if(i == 0 && j == 0)dp[i][j] = true;
+                else if(i == 0) dp[0][j] = dp[0][j-1] && (str2[j-1]==src[j-1]);
+                else if(j == 0) dp[i][0] = dp[i-1][0] && (str1[i-1]==src[i-1]);
+                else dp[i][j] = (dp[i][j-1] && (str2[j-1]==src[i+j-1]))||(dp[i-1][j] && (str1[i-1]==src[i+j-1]));
+            }
+        }
+        return dp[m][n];
+    }
+    
     //115. Distinct Subsequences
     public int numDistinct(String s, String t) {
         char[] src = s.toCharArray();
@@ -152,7 +242,7 @@ public class DP {
     }
     
     //120. Triangle
-    // intuitive using dfs and memoiztion dp! but with O(n^2)
+    // intuitive usng dfs and memoiztion dp! but with O(n^2)
     public int minimumTotal(List<List<Integer>> triangle) {
         if(triangle.size() == 0) return 0;
         return dfs(triangle,new List[triangle.size()],0,0);
@@ -212,6 +302,39 @@ public class DP {
         return dp[m][n-1];
     }
     
+    //132. Palindrome Partitioning II
+    
+    //I realize the order we are going through is actually matter!!!
+    // int this case , we are going right to left
+    // which doest not matter too much but it affect the cut[]!!!!!
+    public int minCut(String s) {
+        // intuition: use dp[i][j] to store wheher i to j is a palindromic subarray!
+        // dp[i][j] = s[i] == s[j] && ( j-i+1<=3 || dp[i+1][j-1])
+        // then go over dp[i][j] from top left to bottom right make last encountered true j as a next i = j +1 also count ++
+        // this will not work because the count itself need some comparison and select(count need dp too!!!)
+        // so we have to decide whether cut[i] = min(cut[j+1]+1)(i=<j<n); 
+        // in the end return the count
+        char[] str = s.toCharArray();
+        int n = str.length;
+        boolean[][] dp = new boolean[n][n];
+        int[] cut = new int[n];
+        int min = 0;
+        for(int i = n-1; i >=0; i--){
+            min = n-i;
+            for(int j = i; j < n; j++){
+                if(str[i] == str[j] && ( j-i+1<=3 || dp[i+1][j-1])){
+                    dp[i][j] = true;
+                    min = Math.min(min,j!=n-1?cut[j+1]+1:0);
+                }  
+            }
+            cut[i] = min;
+        }
+
+        return cut[0];
+    }
+
+    
+    
 	//152. Maximum Product Subarray
     public int maxProduct(int[] nums) {
         //brute force O(n^2)
@@ -246,6 +369,33 @@ public class DP {
         return result;
     }
     
+    //221. Maximal Square
+
+    public int maximalSquare(char[][] matrix) {
+        //say we have dp[i][j] to recard the area of square one corner at the matrix[i][j]!!
+        //
+        // but actually we dont have to record the area we just need to recorde be side lenth!
+        //
+        // and use max to record the maximum dp[i][j] during the interation
+        //1. if matrix[i][j] == '0', then dp[i][j] = 0
+        //2. if matrix[i][j] == '1', dp[i][j] = (1 + Math.sqrt(Math.min(dp[i-1,j-1],dp[i-1,j],dp[i][j-1])))
+        int m = matrix.length;
+        if(m == 0 ) return 0;
+        int n = matrix[0].length;
+        int[][] dp = new int[m+1][n+1];
+        int areaMax = 0;
+        for(int i = 1 ; i <= m; i++){
+            for(int j = 1; j <= n ; j++){
+                if(matrix[i-1][j-1] == '0') dp[i][j] = 0;
+                else {
+                    dp[i][j] = 1 + Math.min(dp[i-1][j-1], Math.min(dp[i-1][j],dp[i][j-1]));
+                    areaMax = Math.max(dp[i][j], areaMax);
+                }
+            }
+        }
+        return areaMax*areaMax;
+    }
+    
     //279. Perfect Squares
 
     public int numSquares(int n) {
@@ -261,6 +411,35 @@ public class DP {
             }
         }
         return dp[n];
+    }
+    //304. Range Sum Query 2D - Immutable
+    class NumMatrix {
+        // we can easily get that the the region is actually (0,0) to (r2,c2) cut by two parts (r1,c2)and (r2,c1) add one intersect part(r1,c1)! 
+        // intuition we can firstly construct a 2D array to store the sum from (0,0) to (i,j)
+        // then every time we call sum region we only do the math within constant time!
+        
+        int[][] sum;
+        
+        public NumMatrix(int[][] matrix) {
+            int n = matrix.length;
+            if(n == 0) return;
+            int m = matrix[0].length;
+            sum = new int[n][m];
+            for(int i = 0; i < n ; i++){
+                for(int j = 0; j < m ; j++){
+                    if(i == 0 && j == 0) sum[i][j] = matrix[i][j];
+                    else sum[i][j] = (i-1>=0?sum[i-1][j]:0) + (j-1>=0?sum[i][j-1]:0) + matrix[i][j] - (i-1>=0&&j-1>=0?sum[i-1][j-1]:0);
+                }
+            }
+        }
+        
+        public int sumRegion(int row1, int col1, int row2, int col2) {
+            if(sum.length == 0||sum[0].length == 0) return 0;
+            if(row1 == 0 && col1 == 0 ) return sum[row2][col2];
+            else if(row1 == 0 ) return sum[row2][col2] - sum[row2][col1-1];
+            else if(col1 == 0 ) return sum[row2][col2] - sum[row1-1][col2];
+            else return sum[row2][col2] - sum[row1-1][col2] - sum[row2][col1-1] + sum[row1-1][col1-1];
+        }
     }
     
     //312. Burst Balloons
@@ -295,6 +474,88 @@ public class DP {
         return dp[0][n];
         
     }
+    
+    //322. Coin Change
+    public int coinChange(int[] coins, int amount) {
+        // intuition greedy: O(mn) but greedy has problem!!! it some times cannot foresee if it can be solved!
+        // this problem should be solved by dp
+        // say dp[i] is the least amount of coins that we need to add up to i!
+        // so dp[i] sould pick up the smallest previous amount from the one can be solved! mount dp[i] = min(dp[i-coin[j]]+1) j = 0,1,..., n
+        // the tricky part is because there can be the amount can not be solved, we init the dp with amount + 1!!
+        // only dp[0] = 0;
+        // now this is bottom up! we have reverse the thoughts!
+        
+        int n = coins.length;
+        int[] dp = new int[amount + 1 ];
+        Arrays.fill(dp, amount + 1);
+        dp[0] = 0;
+        for(int i = 1 ; i <= amount ; i++){
+            for(int j = 0; j < n; j++){
+                if(coins[j]<=i){
+                    dp[i] = Math.min(dp[i], dp[i- coins[j]]+1);
+                }
+            }
+        }
+        return dp[amount] > amount? -1 : dp[amount];
+        
+    }
+    //343. Integer Break
+    public int integerBreak(int n) {
+        //intuition: use dp[i] to store the max product of i
+        // and dp[i] = max(( i - j ) dp[i - j])
+        // time would be O(n^2) space would be O(n)
+        int[] dp = new int[n+1];
+        dp[2] = 1;
+        for(int i = 3; i <= n ; i ++){
+            for(int j = i - 1; j>=1; j --){
+                dp[i] = Math.max(dp[i],(i-j)*(dp[j]<j? j:dp[j]));
+            }
+        }
+        //System.out.println(Arrays.toString(dp));
+        return dp[n];
+    }
+    
+    //413. Arithmetic Slices
+    public int numberOfArithmeticSlices(int[] A) {
+        // this is quite similar with the delete char distance ans some question that ask number of consecutive length
+        // intuition using dp[i] to store the number of slice end with i
+        // then how do we determine dp[i]?
+        // like for 1 2 3 4 dp[3] = 1, dp[4] = if(A[4-1]-A[4-2] == A[4-2]-A[4-3]) 1 + dp[4-1] : 0
+        // as for the boudery dp[0] = dp[1] = 0; plus dp[3] can not be greater than 1
+        int n = A.length;
+        if(n<3) return 0;
+        int[] dp = new int[n+1];
+        dp[0] = 0;
+        dp[1] = 0;
+        int total = 0;
+        for(int i = 3 ; i <= n ;i++){
+            dp[i] = A[i-1]-A[i-2] == A[i-2]-A[i-3]? 1 + dp[i-1] : 0;
+            total+=dp[i];
+        }
+        return total;
+    }
+    //516. Longest Palindromic Subsequence
+    public int longestPalindromeSubseq(String s) {
+        //intuition: very similar to the longest palindromic substring
+        // but this is more loose because the this is for subsquence which can be unconsecutive!
+        // so let's say there is at most a length of dp[i+1][j-1] palindromic subsquence in the index from i+1 to j-1
+        // then dp[i][j] can be dp[i+1][j-1] + 2 if s[i] == s[j]
+        // or dp[i][j] is just the biger one in dp[i+1][j] or dp[i][j-1]
+        char[] str = s.toCharArray();
+        int m = str.length;
+        int[][] dp = new int[m][m];
+        // you have to reverse the thought here btw ! because the dp table itself is going from left bottom to right top
+        // same with the 10 longest palindromic substring!
+        for(int i = m-1; i >=0  ; i --){
+            dp[i][i] = 1 ; // at least have a single char sequence!
+            for(int j = i+1 ; j <m ; j++){
+                if(str[i] == str[j]) dp[i][j] = dp[i+1][j-1] + 2;
+                else dp[i][j] = Math.max(dp[i+1][j],dp[i][j-1]);
+            }
+        }
+        return dp[0][m-1];
+    }
+
     //647. Palindromic Substrings 
     // same idea with 5
     public int countSubstrings(String s) {
@@ -338,6 +599,23 @@ public class DP {
             }
         }
         return res;
+    }
+    
+    //746. Min Cost Climbing Stairs
+
+    public int minCostClimbingStairs(int[] cost) {
+        //intuition: reverse the thought and using dp[i] to record the cost from that stair to the destination 
+        //say we know on the destination dp[n] = 0; 
+        //also dp[n-1] = n-1 which can not be avoided if you step on last stair
+        //so we can easily get dp[i] = cost[i-1] + Min(dp[i+1],dp[i+2])
+        int n = cost.length;
+        int[] dp = new int[ n + 1 ];
+        dp[n] = 0;
+        dp[n-1] = cost[n-1];
+        for( int i = n - 2; i >= 0; i --){
+            dp[i] = cost[ i ] + Math.min(dp[i+1],dp[i+2]);
+        }
+        return Math.min(dp[0],dp[1]);
     }
     
 }

@@ -387,6 +387,7 @@ public class BinarySearch {
     //354. Russian Doll Envelopes
     // new sorting method for array when sort the 2D array for only one D inside of them!!
     public int maxEnvelopes(int[][] nums) {
+    	// every clever!!!
         //Arrays.sort(nums, (a,b) -> a[0]-b[0]);
         //there was a problem here because a[0] can be equal to b[0]
         //but a[1] would larger than b[1] which makes it a ascending sequance and we dont want it
