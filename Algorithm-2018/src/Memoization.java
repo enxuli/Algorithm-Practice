@@ -80,6 +80,48 @@ public class Memoization {
         return res;
     }
     
+    //297. Serialize and Deserialize Binary Tree
+    // I could just using dfs because there is null for me to read instead of using preorder+inorder
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        if(root == null) return sb.toString();
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while(!queue.isEmpty()){
+            TreeNode cur = queue.poll();
+            if(cur == null) sb.append("n,");
+            else {
+                sb.append(cur.val + ",");
+                queue.add(cur.left);
+                queue.add(cur.right);
+            }
+        }
+        return sb.toString();
+    }
+
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        if(data.equals("")) return null;
+        String[] node = data.split(",");
+        Queue<TreeNode> queue = new LinkedList<>();
+        TreeNode root = new TreeNode(Integer.valueOf(node[0]));
+        queue.add(root);
+        int index = 0;
+        while(!queue.isEmpty()){
+            TreeNode cur = queue.poll();
+            if(cur !=null){
+                // just just be carefull for string equal!!!!
+                cur.left = node[++index].equals( "n")? null : new TreeNode(Integer.valueOf(node[index]));
+                cur.right = node[++index].equals("n")? null : new TreeNode(Integer.valueOf(node[index]));
+                queue.add(cur.left);
+                queue.add(cur.right);
+            }
+        }
+        return root;
+    }
+    
     //312. Burst Balloons
     public int maxCoins(int[] nums) {
         int[] nums2 = new int[nums.length + 2];
@@ -109,6 +151,24 @@ public class Memoization {
         memo[left][right] = max;
         return max;
     }
+    //543. Diameter of Binary Tree
 
+    public int diameterOfBinaryTree(TreeNode root) {
+        if(root == null) return 0;
+        int[] ans = dfs(root);
+        return ans[0];
+    }
+    private int[] dfs(TreeNode root){
+        int[] ans = new int[2];
+        if(root == null ) return ans;
+        
+        int[] left = dfs(root.left);
+        int[] right = dfs(root. right);
+        
+        ans[1] = 1 + Math.max(left[1], right[1]);
+        ans[0] = Math.max(left[0],Math.max(right[0],left[1]+ right[1]));
+        
+        return ans;
+    }
     
 }

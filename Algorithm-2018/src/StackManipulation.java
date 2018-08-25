@@ -71,5 +71,35 @@ public class StackManipulation {
         return maxArea;
 
     }
+    //173. Binary Search Tree Iterator
+    public class BSTIterator {
+        Stack<TreeNode> path;
+        
+        public BSTIterator(TreeNode root) {
+            this.path = new Stack<TreeNode>();
+            TreeNode node = root;
+            while(node != null) {
+                path.push(node);
+                node = node.left;
+            }
+        }
+
+        /** @return whether we have a next smallest number */
+        public boolean hasNext() {
+            return !path.isEmpty();
+        }
+
+        /** @return the next smallest number */
+        public int next() {
+            TreeNode cur = path.pop();
+            TreeNode node = cur.right;
+            while(node != null) {
+                path.push(node);
+                node = node.left;
+            }
+            return cur.val;
+        }
+    }
+
 	
 }

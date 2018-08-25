@@ -40,6 +40,8 @@ class Node {
     }
 };
 
+
+
 	//654 bad version
 	public TreeNode constructMaximumBinaryTree(int[] nums) {
         if (Arrays.equals(new int[]{}, nums)) return null;
@@ -201,8 +203,41 @@ class Node {
         Collections.reverse(list); // reverse in the end
         return list;
     }
-    
+    //652. Find Duplicate Subtrees
 
+    public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
+        // like i thought, we can take the advantage of the serialization of the tree node
+        // that is how we can put them into the map and check if there already exsit the same serials
+        List<TreeNode> ans = new ArrayList<>();
+        dfspostorder(root,new HashMap<String,Integer>(),ans);
+        return new ArrayList<TreeNode>(ans);
+    }
+    // remember here we can not put the duplicate answer into the list!!!
+    private String dfspostorder(TreeNode root, HashMap<String,Integer> set, List<TreeNode> ans){
+        if(root == null) return "";
+        String serial = root.val + "," + dfspostorder(root.left, set, ans)+ "," + dfspostorder(root.right,set,ans);
+        if(set.getOrDefault(serial,0)==1) ans.add(root);
+        set.put(serial,set.getOrDefault(serial,0)+1);
+        return serial;
+    }
+    
+    //687. Longest Univalue Path
+    int len = 0; // global variable
+    public int longestUnivaluePath(TreeNode root) {
+        if (root == null) return 0;
+        len = 0;
+        getLen(root, root.val);
+        return len;
+    }
+
+    private int getLen(TreeNode node, int val) {
+        if (node == null) return 0;
+        int left = getLen(node.left, node.val);
+        int right = getLen(node.right, node.val);
+        len = Math.max(len, left + right);
+        if (val == node.val)  return Math.max(left, right) + 1;
+        return 0;
+    }
     
     
 	

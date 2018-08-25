@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DP {
 	//5. Longest Palindromic Substring
@@ -515,6 +519,94 @@ public class DP {
         return dp[n];
     }
     
+    //403. Frog Jump
+    public boolean canCross(int[] stones) {
+        int n = stones.length;
+        Map<Integer, Set<Integer>> lastSteps = new HashMap<Integer, Set<Integer>>();
+        for (int i = 0; i < n; i++) lastSteps.put(stones[i], new HashSet<Integer>());
+        if (n > 1 && stones[1] == 1) lastSteps.get(1).add(1);
+        for (int i = 1; i < stones.length; i++) {
+            for (int j : lastSteps.get(stones[i])) {
+                for (int k = -1; k < 2; k++) {
+                    if (j + k != 0 && lastSteps.containsKey(stones[i] + j + k)) {
+                        // Return if the last stone is reached
+                        if (stones[i] + j + k == stones[n - 1]) return true;
+                        lastSteps.get(stones[i] + j + k).add(j + k);
+                    }
+                }
+            }
+        }
+        return lastSteps.get(stones[n - 1]).size() > 0;
+    }
+    
+    //416. Partition Equal Subset Sum
+    public boolean canPartition(int[] nums) {
+        // you have to read the problem carefully!!!!
+        // this problem is atually very simple if we see there is only freaking two sets!!!!
+        // then this just become a 0/1 knapsack problem!!!
+        // the sum is just 1/2 sum
+        int n = nums.length;
+        int sum = 0;
+        for(int num : nums) sum += num;
+        if(sum% 2 != 0 || (sum/=2) == 0 ) return false;
+        System.out.println(sum);
+        boolean[] dp = new boolean[sum+1];
+        dp[0] = true;
+        for(int num : nums){
+            for(int i = sum; i >= num; i --){
+                // here is the tricky part because we need see if any sum can be achieve with this num
+                // that is, by adding this nums, a previous sum makes to i!! 
+                 dp[i] = dp[i] || dp[i - num]; 
+            } 
+        }
+        
+        return dp[sum];
+    }
+    //494. Target Sum
+    public int findTargetSumWays(int[] nums, int S) {
+        //intuition use dp, say dp[i][S] is the number of ways that at nums[i] the sum equals to S
+        // then the transition could be dp[i][S] = dp[i-1][S-nums[i]] +dp[i-1][S+nums[i]] when symbol is - or +
+        // to deal with the minus index, we sould initially add index with sum of nums. make [sum] as the "0"
+        int sum = 0;
+        int n = nums.length;
+        for(int num : nums) sum += num;
+        if(sum < S || -sum > S) return 0;
+        int[][] dp = new int[n][2*sum+1];
+        //set boundary
+        dp[0][sum-nums[0]] = 1;
+        dp[0][sum+nums[0]] = 1;
+        if(nums[0] == 0) dp[0][sum] = 2;
+        for(int i = 1; i < n ; i++){
+            for(int j = 0; j <= 2*sum; j++){
+                dp[i][j] = (j>=nums[i]?dp[i-1][j-nums[i]]:0) + (j <= 2*sum-nums[i]?dp[i-1][j+nums[i]]:0);
+            }
+        }
+        return dp[n-1][sum+S];
+    }
+    
+    	/**
+	 * 题解：https://leetcode.com/problems/target-sum/discuss/97334/Java-(15-ms)-C%2B%2B-(3-ms)-O(ns)-iterative-DP-solution-using-subset-sum-with-explanation/160162
+	 * sum(P) - sum(N) = target
+	 * sum(P) + sum(N) + sum(P) - sum(N) = target + sum(P) + sum(N)
+	 * 2 * sum(P) = target + sum(nums)
+     * transformation of this problem is awwwwwesome!!!
+	 */
+	public int findTargetSumWays2(int[] nums, int s) {
+		int sum = 0;
+		for (int n : nums)
+			sum += n;
+		return sum < s || (s + sum) % 2 > 0 ? 0 : subsetSum(nums, (s + sum) >>> 1);
+	}
+	
+	private int subsetSum(int[] nums, int s) {
+		int[] dp = new int[s + 1];
+		dp[0] = 1;
+		for (int n : nums)
+			for (int i = s; i >= n; i--)
+				dp[i] += dp[i - n];
+		return dp[s];
+	}
+    
     //413. Arithmetic Slices
     public int numberOfArithmeticSlices(int[] A) {
         // this is quite similar with the delete char distance ans some question that ask number of consecutive length
@@ -533,6 +625,29 @@ public class DP {
             total+=dp[i];
         }
         return total;
+    }
+    //446. Arithmetic Slices II - Subsequence
+    public int numberOfArithmeticSlices2(int[] A) {
+    int res = 0;
+    Map<Integer, Integer>[] map = new Map[A.length];
+		
+    for (int i = 0; i < A.length; i++) {
+        map[i] = new HashMap<>(i);
+        	
+        for (int j = 0; j < i; j++) {
+            long diff = (long)A[i] - A[j];
+            if (diff <= Integer.MIN_VALUE || diff > Integer.MAX_VALUE) continue;
+        		
+            int d = (int)diff;
+            int c1 = map[i].getOrDefault(d, 0);
+            int c2 = map[j].getOrDefault(d, 0);
+         // tricky thing is here, we only add c2 to the result because we need to make sure that length of subsequence >=3
+            res += c2;
+            map[i].put(d, c1 + c2 + 1);
+        }
+    }
+		
+    return res;
     }
     //516. Longest Palindromic Subsequence
     public int longestPalindromeSubseq(String s) {
@@ -599,6 +714,29 @@ public class DP {
             }
         }
         return res;
+    }
+    //712. Minimum ASCII Delete Sum for Two Strings
+    public int minimumDeleteSum(String s1, String s2) {
+        char[] str1 = s1.toCharArray();
+        char[] str2 = s2.toCharArray();
+        int m = str1.length;
+        int n = str2.length;
+        int[][] dp = new int[m+1][n+1];
+        dp[0][0] = 0;
+        for(int i = 0; i < m; i++) dp[i+1][0] = dp[i][0] + str1[i];
+        for(int j = 0; j < n; j++) dp[0][j+1] = dp[0][j] + str2[j];
+        for(int i = 1; i <= m; i++){
+            for(int j = 1; j <=n; j++){
+                if(str1[i-1] != str2[j-1]){
+                    dp[i][j] = Math.min(Math.min(dp[i-1][j]+str1[i-1], dp[i][j-1]+str2[j-1]),dp[i-1][j-1]+str1[i-1]+str2[j-1]);
+                }else dp[i][j] = dp[i-1][j-1];
+            }
+        }
+        //System.out.println(Arrays.toString(dp[0]));
+        //System.out.println(Arrays.toString(dp[1]));
+        //System.out.println(Arrays.toString(dp[2]));
+        //System.out.println(Arrays.toString(dp[3]));
+        return dp[m][n];
     }
     
     //746. Min Cost Climbing Stairs

@@ -37,6 +37,10 @@ public class BTSCollection {
     }
     
     
+    
+    
+    
+    
     public List<Integer> inorderTraversal(TreeNode root) {
         List<Integer> list = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<TreeNode>();
@@ -369,6 +373,46 @@ public class BTSCollection {
     	    
     	    return root;
     	}
+     //235. Lowest Common Ancestor of a Binary Search Tree
+     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+         // exit
+         if(root == null) return null;
+         if(root == p || root == q) return root;
+         // Divide 
+         TreeNode left = lowestCommonAncestor(root.left, p, q);
+         TreeNode right = lowestCommonAncestor(root.right, p, q);
+         
+         // Conquer
+         if(left != null && right != null) return root;
+         else if(left != null || right == null) return left;
+         else if(left == null || right != null) return right;
+         else return null;
+     }
+     // BST PROPERTY
+     public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
+         if(root.val > p.val && root.val > q.val){
+             return lowestCommonAncestor(root.left, p, q);
+         }else if(root.val < p.val && root.val < q.val){
+             return lowestCommonAncestor(root.right, p, q);
+         }else{
+             return root;
+         }
+     }
+     //669. Trim a Binary Search Tree
+     // YOU YOU YOU HAVE TO USE THE BST PROPERTY IN THIS QUESTION OTHERWISE IT'S GONNA BE VERY REDUNDENT!!!!!!!!!!
+     public TreeNode trimBST(TreeNode root, int L, int R) {
+         if (root == null) return null;
+         
+         if (root.val < L) return trimBST(root.right, L, R);
+         if (root.val > R) return trimBST(root.left, L, R);
+         
+         root.left = trimBST(root.left, L, R);
+         root.right = trimBST(root.right, L, R);
+         
+         return root;
+     }
+     
+     
      //572
      
      public boolean isSubtree(TreeNode s, TreeNode t) {
